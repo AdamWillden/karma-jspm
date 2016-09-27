@@ -38,9 +38,9 @@
       expect(files[5].included).toEqual(true);
     });
 
-    it('should apply default wrapper function', function() {
+    it('should not apply default wrapper function', function() {
       initFramework(files, basePath, jspm, client, emitter);
-      expect(client.jspm.testWrapperFunctionName).toEqual('main');
+      expect(client.jspm.testWrapperFunctionName).toBeNull();
     });
 
     it('should apply a custom wrapper function', function() {

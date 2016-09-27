@@ -136,7 +136,7 @@
     });
 
     it('should not apply a wrapper function', function() {
-      expect(client.jspm.testWrapperFunctionName).toBeUndefined();
+      expect(client.jspm.testWrapperFunctionName).toEqual(false);
     });
   });
 }).call(this);

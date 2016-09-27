@@ -4,7 +4,7 @@
     // Port from karma-jspm adapter
     // See https://github.com/Workiva/karma-jspm/blob/master/src/adapter.js
     // ========================================
-
+  console.debug('default-adapter.js running');
 
     if (!System) {
         throw new Error("SystemJS was not found. Please make sure you have " +
@@ -19,6 +19,7 @@
     // Prevent immediately starting tests.
     karma.loaded = function() {
 
+        console.debug('karma.loaded');
 
         // ========================================
         // kamra-jspm requirements
@@ -57,6 +58,8 @@
 
         var preloadPromiseChain = Promise.resolve();
 
+      console.debug('preloadBySystemJS running');
+
       /**
        * if preloadBySystemJS are provided
        */
@@ -88,6 +91,8 @@
 
         preloadPromiseChain.then(function() {
 
+
+          console.debug('test files running');
           /**
            * If angular2 modules where loaded, set up angular2 testing
            */
@@ -104,51 +109,45 @@
                 promiseChain = promiseChain.then((function (moduleName) {
                     return function () {
 
-                        /**
-                         * Test files require special handling. See wrapper method implementation below.
-                         */
-                        if (/[\.|_]spec\.ts$/.test(moduleName) || /[\.|_]spec\.js$/.test(moduleName)) {
-                            return System['import'](moduleName).then(function(module) {
+                      return System['import'](moduleName).then(function(module) {
 
-                                var wrapperFN = karma.config.jspm.testWrapperFunctionName;
+                        var wrapperFN = karma.config.jspm.testWrapperFunctionName;
 
-                                if (wrapperFN && wrapperFN.length && module.hasOwnProperty(wrapperFN)) {
+                        // if (/[\.|_]spec\.ts$/.test(moduleName) || /[\.|_]spec\.js$/.test(moduleName)) {
+                        if (module.hasOwnProperty(wrapperFN)) {
 
-                                    /**
-                                     * Test files have a wrapper method around their describe blocks.
-                                     * Trigger tests by calling the wrapper method.
-                                     */
-                                    module[wrapperFN]();
-                                    return true;
-                                } else {
-                                    console.warn('Module ' + moduleName + ' does not implement ' + wrapperFN + '() method.');
-                                }
-                            });
-                        } else {
+
+
+                          if (wrapperFN && wrapperFN.length) {
 
                             /**
-                             * Load non-test files normally.
+                             * Test files have a wrapper method around their describe blocks.
+                             * Trigger tests by calling the wrapper method.
                              */
-                            return System['import'](moduleName);
+                            module[wrapperFN]();
+                          }
                         }
 
-
+                        return true;
+                      });
                     };
                 })(extractModuleName(karma.config.jspm.expandedFiles[j])));
             }
 
             promiseChain.then(function () {
 
+              console.debug('karma.start running ');
+              console.debug('\n');
+
                 if (window.__coverage__) {
                     window.__coverage__._originalSources = _originalSources;
                 }
-
 
                 karma.start();
             }, function (e) {
                 karma.error(e.name + ": " + e.message);
             });
-        })
+        });
         // });
     };
 

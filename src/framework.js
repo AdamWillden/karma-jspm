@@ -25,6 +25,19 @@ function flatten(structure) {
     return [].concat.apply([], structure);
 }
 
+function normalize(...args) {
+
+    // not doing anything with ...args
+    var args = Array.prototype.slice.call(arguments);
+    var rawpath = path.join.apply(null, args);
+
+    return path.normalize(rawpath);
+}
+
+function hasValue(value) {
+    return value !== undefined && value !== null;
+}
+
 function initJspm(files, basePath, jspm, client, emitter) {
 
     // Initialize jspm config if it wasn't specified in karma.conf.js
@@ -44,7 +57,7 @@ function initJspm(files, basePath, jspm, client, emitter) {
         client.jspm.paths = jspm.paths;
     if(jspm.meta !== undefined && typeof jspm.meta === 'object')
         client.jspm.meta = jspm.meta;
-    if(jspm.testWrapperFunctionName !== undefined || jspm.testWrapperFunctionName !== null) {
+    if(hasValue(jspm.testWrapperFunctionName)) {
         client.jspm.testWrapperFunctionName = jspm.testWrapperFunctionName;
     } else {
         client.jspm.testWrapperFunctionName = false;
@@ -58,7 +71,7 @@ function initJspm(files, basePath, jspm, client, emitter) {
     // Adapters
     // -------
 
-    var defaultAdapter = __dirname + '/files/default-adapter.js';
+    var defaultAdapter = normalize(__dirname, 'files', 'default-adapter.js');
 
     if(jspm.adapter !== undefined) {
 
@@ -67,39 +80,39 @@ function initJspm(files, basePath, jspm, client, emitter) {
             if (jspm.preloadBySystemJS) {
                 client.jspm.preloadBySystemJS = jspm.preloadBySystemJS;
             } else {
-                client.jspm.preloadBySystemJS = require('./adapters/angular2-preload-files');
+                client.jspm.preloadBySystemJS = require('./preloadFiles/angular2-preload-files');
             }
 
             /**
              * Angular test files may wrap tests in a function named 'main'
              */
-            client.jspm.testWrapperFunctionName = (jspm.testWrapperFunctionName) ? jspm.testWrapperFunctionName : 'main';
+            client.jspm.testWrapperFunctionName = (hasValue(jspm.testWrapperFunctionName)) ? jspm.testWrapperFunctionName : null;
 
             jspm.adapter = defaultAdapter;
 
         } else {
-            jspm.adapter = path.normalize(basePath + '/' + jspm.adapter);
+            jspm.adapter = normalize(basePath, jspm.adapter);
         }
     } else {
         jspm.adapter = defaultAdapter;
     }
 
-    var packagesPath = path.normalize(basePath + '/' + jspm.packages + '/');
-    var browserPath = path.normalize(basePath + '/' + jspm.browserConfig);
-    var devPath = path.normalize(basePath + '/' + jspm.dev);
-    var nodePath = path.normalize(basePath + '/' + jspm.node);
+    var packagesPath = normalize(basePath, jspm.packages) + path.sep;
+    var browserPath = normalize(basePath, (jspm.browserConfig || '') );
+    var devPath = normalize(basePath, (jspm.dev || '') );
+    var nodePath = normalize(basePath, (jspm.node || '') );
     var configFiles = Array.isArray(jspm.config) ? jspm.config : [jspm.config];
     var configPaths = configFiles.map(function(config) {
-        return path.normalize(basePath + '/' + config);
+        return normalize(basePath, config);
     });
 
     // Add SystemJS loader and jspm config
     function getLoaderPath(fileName){
-        var exists = glob.sync(packagesPath + fileName + '@*.js');
+        var exists = glob.sync( normalize(packagesPath, fileName + '@*.js') );
         if(exists && exists.length != 0){
-            return packagesPath + fileName + '@*.js';
+            return normalize(packagesPath, fileName + '@*.js');
         } else {
-            return packagesPath + fileName + '.js';
+            return normalize(packagesPath, fileName + '.js');
         }
     }
 
@@ -126,13 +139,13 @@ function initJspm(files, basePath, jspm, client, emitter) {
     );
 
     // Coverage
-    files.unshift(filePattern.createPattern(__dirname + '/files/hookSystemJS.js'));
-    files.unshift(filePattern.createPattern(__dirname + '/files/instrumenter.js'));
+    files.unshift(filePattern.createPattern( normalize(__dirname, 'files', 'hookSystemJS.js')));
+    files.unshift(filePattern.createPattern( normalize(__dirname, 'files', 'instrumenter.js')));
 
     // SystemJS
     files.unshift(filePattern.createPattern(getLoaderPath('system.src')));
     files.unshift(filePattern.createPattern(getLoaderPath('system-polyfills.src')));
-    files.unshift(filePattern.createPattern(__dirname + '/files/polyfills.js'));
+    files.unshift(filePattern.createPattern( normalize(__dirname, 'files', 'polyfills.js')));
 
     // Loop through all of jspm.load_files and do two things
     // 1. Add all the files as "served" files to the files array
@@ -140,23 +153,24 @@ function initJspm(files, basePath, jspm, client, emitter) {
     //    Store that in client.jspm.expandedFiles
     function addExpandedFiles() {
         client.jspm.expandedFiles = flatten(jspm.loadFiles.map(function (file) {
-            files.push(filePattern.createServedPattern(basePath + '/' + (file.pattern || file), typeof file !== 'string' ? file : null));
+            files.push(filePattern.createServedPattern(normalize(basePath, (file.pattern || file)), typeof file !== 'string' ? file : null));
             return filePattern.expandGlob(file, basePath);
         }));
     }
+
     addExpandedFiles();
 
     emitter.on('file_list_modified', addExpandedFiles);
 
     // Add served files to files array
     jspm.serveFiles.map(function(file){
-        files.push(filePattern.createServedPattern(basePath + '/' + (file.pattern || file)));
+        files.push(filePattern.createServedPattern(normalize(basePath, (file.pattern || file))));
     });
 
     // Allow Karma to serve all files within jspm_packages.
     // This allows jspm/SystemJS to load them
     var jspmPattern = filePattern.createServedPattern(
-        packagesPath + '!(system-polyfills.src.js|system.src.js)/**', {nocache: jspm.cachePackages !== true}
+      normalize(packagesPath, '!(system-polyfills.src.js|system.src.js)','**'), {nocache: jspm.cachePackages !== true}
     );
     jspmPattern.watched = false;
     files.push(jspmPattern);
@@ -171,3 +185,4 @@ initJspm.$inject = [
     'emitter'];
 
 module.exports = initJspm;
+

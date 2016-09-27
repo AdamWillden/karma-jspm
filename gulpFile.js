@@ -6,7 +6,7 @@ var uglify = require('gulp-uglify');
 var sourcemaps = require('gulp-sourcemaps');
 var gutil = require('gulp-util');
 
-gulp.task('default', function () {
+gulp.task('instrumenter', function () {
   // set up the browserify instance on a task basis
   var b = browserify({
     entries: './src/coverage/instrumenterIndex.js',
