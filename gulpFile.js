@@ -11,12 +11,11 @@ var yargs = require('yargs');
 var fs = require('fs');
 var git = require('gulp-git');
 var childProcess = require('child_process');
+// var gulpLoadPlugins = require('gulp-load-plugins');
 
 var pkg;
 var argv = yargs.argv;
 var spawn = childProcess.spawn;
-
-console.log(git);
 
 gulp.task('instrumenter', function () {
   // set up the browserify instance on a task basis
@@ -53,7 +52,11 @@ gulp.task('bump.patch', function(done){
   pushVersion(done, {bumpType: 'patch'});
 });
 
-
+var files = [
+  './**/!(.git)*',
+  '!./node_modules{,/**/*}',
+  '!./.idea{,/**/*}'
+];
 
 function bumpVersion(config) {
 
@@ -94,9 +97,8 @@ function readPackageJson() {
 
 function add() {
 
-  console.log('git add ./**/!(.git)*');
   return new Promise(function(resolve, reject) {
-    gulp.src('./**/!(.git)*')
+    gulp.src(files)
       .pipe(git.add())
       .on('end', resolve)
       .on('error', reject);
@@ -108,7 +110,7 @@ function commit() {
 
   console.log('git commit');
   return new Promise(function(resolve, reject) {
-    gulp.src('./**/*')
+    gulp.src(files)
       .pipe(git.commit('bump to version v' + pkg.version, {emitData: true}))
       .on('data', function(data) {
         // gutil.log(data);
@@ -204,4 +206,4 @@ function pushVersion(done, config) {
     done();
   })
 
-};
+}
