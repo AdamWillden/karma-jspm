@@ -25,7 +25,7 @@ function flatten(structure) {
     return [].concat.apply([], structure);
 }
 
-function normalize(...args) {
+function normalize() {
 
     // not doing anything with ...args
     var args = Array.prototype.slice.call(arguments);
