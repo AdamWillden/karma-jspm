@@ -13,9 +13,12 @@ var git = require('gulp-git');
 var childProcess = require('child_process');
 // var gulpLoadPlugins = require('gulp-load-plugins');
 
+
 var pkg;
 var argv = yargs.argv;
 var spawn = childProcess.spawn;
+
+var commitMessage = argv.m;
 
 gulp.task('instrumenter', function () {
   // set up the browserify instance on a task basis
@@ -97,6 +100,7 @@ function readPackageJson() {
 
 function add() {
 
+  console.log('git add .');
   return new Promise(function(resolve, reject) {
     gulp.src(files)
       .pipe(git.add())
@@ -108,10 +112,12 @@ function add() {
 
 function commit() {
 
-  console.log('git commit');
+  commitMessage = (commitMessage && commitMessage.length) ? commitMessage : 'bump to version v' + pkg.version;
+
+  console.log('git commit -m ' + commitMessage);
   return new Promise(function(resolve, reject) {
     gulp.src(files)
-      .pipe(git.commit('bump to version v' + pkg.version, {emitData: true}))
+      .pipe(git.commit(commitMessage, {emitData: true}))
       .on('data', function(data) {
         // gutil.log(data);
       })
@@ -124,7 +130,7 @@ function commit() {
 
 function pushToMaster() {
 
-  console.log('pushToMaster');
+  console.log('git push origin master');
   return new Promise(function(resolve, reject) {
      git.push('origin', 'master', function(err) {
       if (err) {
@@ -138,9 +144,8 @@ function pushToMaster() {
 
 function tag() {
 
-  console.log('git tag');
   var tag = 'v' + pkg.version;
-
+  console.log('git tag ' + tag);
   return new Promise(function(resolve, reject) {
      git.tag(tag, 'release version ' + pkg.version, function(err) {
       if (err) {
@@ -154,9 +159,9 @@ function tag() {
 
 function pushTag() {
 
-  console.log('git push');
   var tag = 'v' + pkg.version;
 
+  console.log('git push origin ' + tag);
   return new Promise(function(resolve, reject) {
      git.push('origin', tag, function(err) {
       if (err) {
