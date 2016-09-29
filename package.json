@@ -1,6 +1,6 @@
 {
-  "name": "karma-uiuxengineering-jspm",
-  "version": "3.0.3",
+  "name": "@uiuxengineering/karma-jspm",
+  "version": "3.0.4",
   "description": "Include jspm module loader for karma runs; allows dynamic loading of src and test files and modules",
   "main": "index.js",
   "keywords": [
@@ -25,7 +25,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git@github.com:UIUXEngineering/karma-jspm.git"
+    "url": "git@github.com:UIUXEngineering/karma-jspm-deprecated.git"
   },
   "dependencies": {
     "glob": "~3.2",
