@@ -1,6 +1,6 @@
 {
   "name": "karma-uiuxengineering-jspm",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Include jspm module loader for karma runs; allows dynamic loading of src and test files and modules",
   "main": "index.js",
   "keywords": [
