@@ -14,9 +14,9 @@ plugins: [
 
 ```
 
-It is better to adhere to karma standards, both to fix this issue and to allow
-developers to not have to configure plugisn at all since karma looks for the ```karma-*``` 
-prefix in the node_modules directory.
+It is better to adhere to karma standards to fix this issue and to allow
+developers to not have to configure plugins. Karma looks for the ```karma-*``` 
+prefix in the node_modules directory so a config is not required.
 
 To install this plugin from the new NPM package:
 
@@ -36,3 +36,5 @@ plugins: [
     ]
 
 ```
+
+or not configured at all.
