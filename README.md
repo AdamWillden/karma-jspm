@@ -16,7 +16,7 @@ See a sample implementation of this plugin at [angular2-jspm-typescript-seed](ht
 
 ##Installation
 
-Available in npm: `npm install @uiuxengineering/karma-jspm --save-dev`
+Available in npm: `npm install karma-uiuxengineering-jspm --save-dev`
 
 **This plugin assumes you are using jspm in your project.** You will 
 need to have a `config.js` in the root of your project (though this 
@@ -35,17 +35,14 @@ Include this plugin in your frameworks:
 frameworks: ['jspm', 'jasmine'],
 ```
 
-Because this plugin is published in the npm organization @uiuxengineering,
-you will have to require it directly in the plugins property of your
-karma config. Unfortunately, this means you will have to name all your
-plugins. Suggestions welcome to fix this.
+If you want to register the plugin with karma ( [not required](http://karma-runner.github.io/1.0/config/plugins.html) ):
 
 ```js
 plugins: [
-      require('@uiuxengineering/karma-jspm'),
+      'karma-uiuxengineering-jspm',
       'karma-jasmine',
       'karma-chrome-launcher'
-    ],
+    ]
 ```
 
 Set ```basePath``` of your karma config to the the directory where
@@ -317,6 +314,8 @@ manually configure the paths.
 Provide an array of path strings that are the same as you would import 
 them in your app. They will load in same order as your array.
 
+see [Angular 2.0 related files pre-loaded](https://github.com/UIUXEngineering/karma-jspm/blob/master/src/preloadFiles/angular2-preload-files.js).
+
 ```js
 jspm: {
     preloadBySystemJS: [
@@ -356,7 +355,7 @@ preprocessors: {
 
 The reporter works the same as other karma reporters.
 ```js
-reporters: ['jspm'],
+reporters: ['jspm']
 ```
 
 ####remap
