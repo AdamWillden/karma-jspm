@@ -58,7 +58,7 @@
 
         var preloadPromiseChain = Promise.resolve();
 
-      console.debug('preloadBySystemJS running');
+      console.debug('Load prerequisite files.');
 
       /**
        * if preloadBySystemJS are provided
@@ -85,14 +85,17 @@
                         });
 
                     };
-                })(extractModuleName(karma.config.jspm.preloadBySystemJS[i])));
+                })(extractModuleName(karma.config.jspm.preloadBySystemJS[i])),
+                function onLoadError(err) {
+                    console.debug('ERROR loading ', err);
+                });
             }
         }
 
         preloadPromiseChain.then(function() {
 
 
-          console.debug('test files running');
+          console.debug('Loading application and test files');
           /**
            * If angular2 modules where loaded, set up angular2 testing
            */
@@ -131,13 +134,15 @@
                         return true;
                       });
                     };
-                })(extractModuleName(karma.config.jspm.expandedFiles[j])));
+                })(extractModuleName(karma.config.jspm.expandedFiles[j])),
+                    function onLoadError(err) {
+                        console.debug('ERROR loading ', err);
+                    });
             }
 
             promiseChain.then(function () {
 
-              console.debug('karma.start running ');
-              console.debug('\n');
+              console.debug('karma.start\n');
 
                 if (window.__coverage__) {
                     window.__coverage__._originalSources = _originalSources;
@@ -145,10 +150,10 @@
 
                 karma.start();
             }, function (e) {
+                console.debug('KARMA ERROR ', e);
                 karma.error(e.name + ": " + e.message);
             });
         });
-        // });
     };
 
     function extractModuleName(fileName) {
