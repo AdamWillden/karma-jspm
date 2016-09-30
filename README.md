@@ -1,5 +1,6 @@
-# karma-jspm  [![Build Status](https://travis-ci.org/UIUXEngineering/karma-jspm.svg?branch=master)](https://travis-ci.org/UIUXEngineering/karma-jspm)
+# karma-jspm  
 
+[![Build Status](https://travis-ci.org/UIUXEngineering/karma-jspm.svg?branch=master)](https://travis-ci.org/UIUXEngineering/karma-jspm)
 [![Join the chat at https://gitter.im/UIUXEngineering/karma-jspm](https://badges.gitter.im/UIUXEngineering/karma-jspm.svg)](https://gitter.im/UIUXEngineering/karma-jspm?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
