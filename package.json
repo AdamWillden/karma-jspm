@@ -37,11 +37,15 @@
   "devDependencies": {
     "bluebird": "^3.4.6",
     "browserify": "^13.0.1",
+    "commitizen": "^2.8.6",
+    "conventional-changelog": "^1.1.0",
+    "conventional-changelog-cli": "^1.2.0",
     "cross-env": "^1.0.7",
     "dateformat": "^1.0.12",
     "eslint": "^2.10.2",
     "gulp": "^3.9.1",
     "gulp-bump": "^2.4.0",
+    "gulp-conventional-changelog": "^1.1.0",
     "gulp-git": "^1.7.1",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-uglify": "^1.5.4",
@@ -53,5 +57,10 @@
     "sinon": "^1.17.4",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/conventional-changelog"
+    }
   }
 }
