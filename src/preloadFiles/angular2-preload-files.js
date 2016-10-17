@@ -5,7 +5,7 @@
 module.exports = [
   // Polyfills
   'es6-shim',
-  'core-js/client/shim.min.js',
+  // 'core-js/client/shim.min.js',
   'reflect-metadata/Reflect.js',
 
   // Test Assistance
