@@ -38,9 +38,9 @@
     "bluebird": "^3.4.6",
     "browserify": "^13.0.1",
     "commitizen": "^2.8.6",
-    "conventional-changelog": "^1.1.0",
     "conventional-changelog-cli": "^1.2.0",
     "cross-env": "^1.0.7",
+    "cz-conventional-changelog": "^1.2.0",
     "dateformat": "^1.0.12",
     "eslint": "^2.10.2",
     "gulp": "^3.9.1",
@@ -60,7 +60,7 @@
   },
   "config": {
     "commitizen": {
-      "path": "./node_modules/conventional-changelog"
+      "path": "./node_modules/cz-conventional-changelog"
     }
   }
 }
