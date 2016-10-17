@@ -132,7 +132,11 @@
                         }
 
                         return true;
-                      });
+                      },
+                        function onLoadError(err) {
+                          console.debug('ERROR loading ', err);
+                          console.debug('Trying to load module: ', moduleName);
+                        });
                     };
                 })(extractModuleName(karma.config.jspm.expandedFiles[j])),
                     function onLoadError(err) {
