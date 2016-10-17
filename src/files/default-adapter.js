@@ -4,7 +4,7 @@
     // Port from karma-jspm adapter
     // See https://github.com/Workiva/karma-jspm/blob/master/src/adapter.js
     // ========================================
-  console.debug('default-adapter.js running');
+  console.info('default-adapter.js running');
 
     if (!System) {
         throw new Error("SystemJS was not found. Please make sure you have " +
@@ -19,7 +19,7 @@
     // Prevent immediately starting tests.
     karma.loaded = function() {
 
-        console.debug('karma.loaded');
+        console.info('karma.loaded');
 
         // ========================================
         // kamra-jspm requirements
@@ -58,7 +58,7 @@
 
         var preloadPromiseChain = Promise.resolve();
 
-      console.debug('Load prerequisite files.');
+      console.info('Load prerequisite files.');
 
       /**
        * if preloadBySystemJS are provided
@@ -87,7 +87,7 @@
                     };
                 })(extractModuleName(karma.config.jspm.preloadBySystemJS[i])),
                 function onLoadError(err) {
-                    console.debug('ERROR loading ', err);
+                    console.info('ERROR loading ', err);
                 });
             }
         }
@@ -95,7 +95,7 @@
         preloadPromiseChain.then(function() {
 
 
-          console.debug('Loading application and test files');
+          console.info('Loading application and test files');
           /**
            * If angular2 modules where loaded, set up angular2 testing
            */
@@ -134,19 +134,19 @@
                         return true;
                       },
                         function onLoadError(err) {
-                          console.debug('ERROR loading ', err);
-                          console.debug('Trying to load module: ', moduleName);
+                          console.info('ERROR loading ', err);
+                          console.info('Trying to load module: ', moduleName);
                         });
                     };
                 })(extractModuleName(karma.config.jspm.expandedFiles[j])),
                     function onLoadError(err) {
-                        console.debug('ERROR loading ', err);
+                        console.info('ERROR loading ', err);
                     });
             }
 
             promiseChain.then(function () {
 
-              console.debug('karma.start\n');
+              console.info('karma.start\n');
 
                 if (window.__coverage__) {
                     window.__coverage__._originalSources = _originalSources;
@@ -154,7 +154,7 @@
 
                 karma.start();
             }, function (e) {
-                console.debug('KARMA ERROR ', e);
+                console.info('KARMA ERROR ', e);
                 karma.error(e.name + ": " + e.message);
             });
         });
