@@ -4,12 +4,12 @@
     // Port from karma-jspm adapter
     // See https://github.com/Workiva/karma-jspm/blob/master/src/adapter.js
     // ========================================
-  console.info('default-adapter.js running');
+    console.info('default-adapter.js running');
 
     if (!System) {
         throw new Error("SystemJS was not found. Please make sure you have " +
-          "initialized jspm via installing a dependency with jspm, " +
-          "or by running 'jspm dl-loader'.");
+            "initialized jspm via installing a dependency with jspm, " +
+            "or by running 'jspm dl-loader'.");
     }
 
     // System.config({ baseURL: 'base' });
@@ -25,22 +25,22 @@
         // kamra-jspm requirements
         // ========================================
 
-        if(karma.config.jspm.paths !== undefined &&
-          typeof karma.config.jspm.paths === 'object') {
+        if (karma.config.jspm.paths !== undefined &&
+            typeof karma.config.jspm.paths === 'object') {
             System.config({
                 paths: karma.config.jspm.paths
             });
         }
 
-        if(karma.config.jspm.meta !== undefined &&
-          typeof karma.config.jspm.meta === 'object') {
+        if (karma.config.jspm.meta !== undefined &&
+            typeof karma.config.jspm.meta === 'object') {
             System.config({
                 meta: karma.config.jspm.meta
             });
         }
 
         // Exclude bundle configurations if useBundles option is not specified
-        if(!karma.config.jspm.useBundles){
+        if (!karma.config.jspm.useBundles) {
             System.bundles = [];
         }
 
@@ -58,102 +58,110 @@
 
         var preloadPromiseChain = Promise.resolve();
 
-      console.info('Load prerequisite files.');
+        console.info('Load prerequisite files.');
 
-      /**
-       * if preloadBySystemJS are provided
-       */
+        /**
+         * if preloadBySystemJS are provided
+         */
         if (karma.config.jspm.preloadBySystemJS && karma.config.jspm.preloadBySystemJS.length) {
-            for (var i = 0; i <  karma.config.jspm.preloadBySystemJS.length; i++) {
-                preloadPromiseChain = preloadPromiseChain.then((function (moduleName) {
-                    return function () {
+            for (var i = 0; i < karma.config.jspm.preloadBySystemJS.length; i++) {
+                preloadPromiseChain = preloadPromiseChain.then((function(moduleName) {
+                    return function() {
 
                         return System['import'](moduleName).then(function(module) {
 
+                            // console.debug('Module loaded: ' + moduleName);
+
                             if (module.hasOwnProperty('BrowserDynamicTestingModule')) {
-                              BrowserDynamicTestingModule = module['BrowserDynamicTestingModule'];
+                                BrowserDynamicTestingModule = module['BrowserDynamicTestingModule'];
                             }
 
                             if (module.hasOwnProperty('platformBrowserDynamicTesting')) {
-                              platformBrowserDynamicTesting = module['platformBrowserDynamicTesting'];
+                                platformBrowserDynamicTesting = module['platformBrowserDynamicTesting'];
                             }
 
                             if (module.hasOwnProperty('TestBed')) {
-                              TestBed = module['TestBed'];
+                                TestBed = module['TestBed'];
                             }
 
+                        }).catch(function(err) {
+                            console.info(err);
+                            console.info('SystemJS Error loading module: ' + moduleName);
                         });
 
                     };
-                })(extractModuleName(karma.config.jspm.preloadBySystemJS[i])),
-                function onLoadError(err) {
-                    console.info('ERROR loading ', err);
-                });
+                })(extractModuleName(karma.config.jspm.preloadBySystemJS[i])))
+                    .catch(function(err) {
+                        console.info(err);
+                        console.info('Promise Error for module ' + karma.config.jspm.expandedFiles[j]);
+                    });
             }
         }
 
-        preloadPromiseChain.then(function() {
+        preloadPromiseChain = preloadPromiseChain.then(function() {
 
 
-          console.info('Loading application and test files');
-          /**
-           * If angular2 modules where loaded, set up angular2 testing
-           */
+            console.info('Loading application and test files');
+            /**
+             * If angular2 modules where loaded, set up angular2 testing
+             */
             if (TestBed && BrowserDynamicTestingModule && platformBrowserDynamicTesting) {
-              TestBed.initTestEnvironment(
-                BrowserDynamicTestingModule,
-                platformBrowserDynamicTesting()
-              );
+                TestBed.initTestEnvironment(
+                    BrowserDynamicTestingModule,
+                    platformBrowserDynamicTesting()
+                );
             }
 
             // Load everything specified in loadFiles in the specified order
             var promiseChain = Promise.resolve();
             for (var j = 0; j < karma.config.jspm.expandedFiles.length; j++) {
-                promiseChain = promiseChain.then((function (moduleName) {
-                    return function () {
+                promiseChain = promiseChain.then((function(moduleName) {
+                    return function() {
 
-                      return System['import'](moduleName).then(function(module) {
+                        return System['import'](moduleName).then(function(module) {
 
-                        var wrapperFN = karma.config.jspm.testWrapperFunctionName;
+                            // console.debug('Module loaded: ' + moduleName);
 
-                        // if (/[\.|_]spec\.ts$/.test(moduleName) || /[\.|_]spec\.js$/.test(moduleName)) {
-                        if (module.hasOwnProperty(wrapperFN)) {
+                            var wrapperFN = karma.config.jspm.testWrapperFunctionName;
+
+                            // if (/[\.|_]spec\.ts$/.test(moduleName) || /[\.|_]spec\.js$/.test(moduleName)) {
+                            if (module.hasOwnProperty(wrapperFN)) {
 
 
+                                if (wrapperFN && wrapperFN.length) {
 
-                          if (wrapperFN && wrapperFN.length) {
+                                    /**
+                                     * Test files have a wrapper method around their describe blocks.
+                                     * Trigger tests by calling the wrapper method.
+                                     */
+                                    module[wrapperFN]();
+                                }
+                            }
 
-                            /**
-                             * Test files have a wrapper method around their describe blocks.
-                             * Trigger tests by calling the wrapper method.
-                             */
-                            module[wrapperFN]();
-                          }
-                        }
+                            return true;
 
-                        return true;
-                      },
-                        function onLoadError(err) {
-                          console.info('ERROR loading ', err);
-                          console.info('Trying to load module: ', moduleName);
+                        }).catch(function(err) {
+                            console.info(err);
+                            console.info('SystemJS Error loading module: ' + moduleName);
                         });
                     };
-                })(extractModuleName(karma.config.jspm.expandedFiles[j])),
-                    function onLoadError(err) {
-                        console.info('ERROR loading ', err);
+                })(extractModuleName(karma.config.jspm.expandedFiles[j])))
+                    .catch(function(err) {
+                        console.info(err);
+                        console.info('Promise Error for module ' + karma.config.jspm.expandedFiles[j]);
                     });
             }
 
-            promiseChain.then(function () {
+            promiseChain.then(function() {
 
-              console.info('karma.start\n');
+                console.info('karma.start');
 
                 if (window.__coverage__) {
                     window.__coverage__._originalSources = _originalSources;
                 }
 
                 karma.start();
-            }, function (e) {
+            }, function(e) {
                 console.info('KARMA ERROR ', e);
                 karma.error(e.name + ": " + e.message);
             });
