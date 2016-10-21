@@ -4,7 +4,7 @@
     // Port from karma-jspm adapter
     // See https://github.com/Workiva/karma-jspm/blob/master/src/adapter.js
     // ========================================
-    console.info('default-adapter.js running');
+    console.log('default-adapter.js running');
 
     if (!System) {
         throw new Error("SystemJS was not found. Please make sure you have " +
@@ -19,7 +19,7 @@
     // Prevent immediately starting tests.
     karma.loaded = function() {
 
-        console.info('karma.loaded');
+        console.log('karma.loaded');
 
         // ========================================
         // kamra-jspm requirements
@@ -52,131 +52,183 @@
             return false;
         });
 
-        var BrowserDynamicTestingModule;
-        var platformBrowserDynamicTesting;
-        var TestBed;
-
-        var preloadPromiseChain = Promise.resolve();
-
-        console.info('Load prerequisite files.');
-
         /**
          * if preloadBySystemJS are provided
          */
+        var allPreloadFiles = [];
         if (karma.config.jspm.preloadBySystemJS && karma.config.jspm.preloadBySystemJS.length) {
-            for (var i = 0; i < karma.config.jspm.preloadBySystemJS.length; i++) {
-                preloadPromiseChain = preloadPromiseChain.then((function(moduleName) {
-                    return function() {
-
-                        return System['import'](moduleName).then(function(module) {
-
-                            // console.debug('Module loaded: ' + moduleName);
-
-                            if (module.hasOwnProperty('BrowserDynamicTestingModule')) {
-                                BrowserDynamicTestingModule = module['BrowserDynamicTestingModule'];
-                            }
-
-                            if (module.hasOwnProperty('platformBrowserDynamicTesting')) {
-                                platformBrowserDynamicTesting = module['platformBrowserDynamicTesting'];
-                            }
-
-                            if (module.hasOwnProperty('TestBed')) {
-                                TestBed = module['TestBed'];
-                            }
-
-                        }).catch(function(err) {
-                            console.info(err);
-                            console.info('SystemJS Error loading module: ' + moduleName);
-                        });
-
-                    };
-                })(extractModuleName(karma.config.jspm.preloadBySystemJS[i])))
-                    .catch(function(err) {
-                        console.info(err);
-                        console.info('Promise Error for module ' + karma.config.jspm.expandedFiles[j]);
-                    });
-            }
+            console.log('Loading prerequisite files...');
+            allPreloadFiles = karma.config.jspm.preloadBySystemJS
+                .map(extractModuleName);
         }
 
-        preloadPromiseChain = preloadPromiseChain.then(function() {
+        var allSpecFiles = karma.config.jspm.expandedFiles
+            .filter(isSpecFile)
+            .map(extractModuleName);
 
+        var allAppFiles = karma.config.jspm.expandedFiles
+            .filter(notSpecFile)
+            .map(extractModuleName);
 
-            console.info('Loading application and test files');
-            /**
-             * If angular2 modules where loaded, set up angular2 testing
-             */
-            if (TestBed && BrowserDynamicTestingModule && platformBrowserDynamicTesting) {
-                TestBed.initTestEnvironment(
-                    BrowserDynamicTestingModule,
-                    platformBrowserDynamicTesting()
-                );
-            }
+        // Angular 2.x testing.TestBed.initTestEnvironment
+        var testingBrowser;
+        var testing;
 
-            // Load everything specified in loadFiles in the specified order
-            var promiseChain = Promise.resolve();
-            for (var j = 0; j < karma.config.jspm.expandedFiles.length; j++) {
-                promiseChain = promiseChain.then((function(moduleName) {
-                    return function() {
+        //------  LOAD SEQUENCE ------
+        //------  LOAD SEQUENCE ------
+        //------  LOAD SEQUENCE ------
 
-                        return System['import'](moduleName).then(function(module) {
+        createPromiseChain(allPreloadFiles, 'preload')
+            .then(function() {
 
-                            // console.debug('Module loaded: ' + moduleName);
+                /**
+                 * If angular2 modules where loaded, set up angular2 testing
+                 */
+                if (testing && testingBrowser) {
 
-                            var wrapperFN = karma.config.jspm.testWrapperFunctionName;
+                    console.log('\n\nAngular 2.0 TestBed.initTestEnvironment.\n\n');
 
-                            // if (/[\.|_]spec\.ts$/.test(moduleName) || /[\.|_]spec\.js$/.test(moduleName)) {
-                            if (module.hasOwnProperty(wrapperFN)) {
+                    testing.TestBed.initTestEnvironment(testingBrowser.BrowserDynamicTestingModule,
+                        testingBrowser.platformBrowserDynamicTesting());
 
+                }
 
-                                if (wrapperFN && wrapperFN.length) {
+                return Promise.resolve();
 
-                                    /**
-                                     * Test files have a wrapper method around their describe blocks.
-                                     * Trigger tests by calling the wrapper method.
-                                     */
-                                    module[wrapperFN]();
-                                }
-                            }
-
-                            return true;
-
-                        }).catch(function(err) {
-                            console.info(err);
-                            console.info('SystemJS Error loading module: ' + moduleName);
-                        });
-                    };
-                })(extractModuleName(karma.config.jspm.expandedFiles[j])))
-                    .catch(function(err) {
-                        console.info(err);
-                        console.info('Promise Error for module ' + karma.config.jspm.expandedFiles[j]);
-                    });
-            }
-
-            promiseChain.then(function() {
-
-                console.info('karma.start');
+            })
+            .then(function() {
+                return createPromiseChain(allAppFiles, 'app');
+            })
+            .then(function() {
+                return createPromiseChain(allSpecFiles, 'spec');
+            })
+            .then(function() {
 
                 if (window.__coverage__) {
                     window.__coverage__._originalSources = _originalSources;
                 }
 
-                karma.start();
-            }, function(e) {
-                console.info('KARMA ERROR ', e);
-                karma.error(e.name + ": " + e.message);
+                // Next
+                console.log('karma.start');
+
+                return Promise.resolve();
+            })
+            .then(karma.start, karma.error);
+
+        //------  HELPER FUNCTIONS ------
+        //------  HELPER FUNCTIONS ------
+        //------  HELPER FUNCTIONS ------
+
+        function isSpecFile(path) {
+            return path.slice(-7) == 'spec.ts';
+        }
+
+        function notSpecFile(path) {
+            return path.slice(-7) != 'spec.ts';
+        }
+
+        function SystemImportPreload(moduleName) {
+            return System['import'](moduleName).then(function(module) {
+
+                // console.log('Prerequisite module loaded: ' + moduleName);
+
+                if (module.hasOwnProperty('platformBrowserDynamicTesting') || module.hasOwnProperty('BrowserDynamicTestingModule')) {
+                    testingBrowser = module;
+                }
+
+                if (module.hasOwnProperty('TestBed')) {
+                    testing = module;
+                }
+
+            }, function(err) {
+
+                console.log(err);
+                console.log('\n\nSystemJS Error loading ' +
+                    'prerequisite module: ' + moduleName +
+                    '. \nYou may need to install with ' +
+                    'jspm or configure in your systemjs config\n\n');
+
             });
-        });
-    };
-
-    function extractModuleName(fileName) {
-
-        if (karma.config.jspm.prefix) {
-            // fileName = karma.config.jspm.prefix + fileName;
         }
 
-        if (stripExtension) {
-            return fileName.replace(/\.js$/, "");
+        function SystemImportApp(moduleName) {
+            return System['import'](moduleName);
         }
-        return fileName;
+
+        function SystemImportSpecs(moduleName) {
+            return System['import'](moduleName).then(function(module) {
+
+                    var wrapperFN = karma.config.jspm.testWrapperFunctionName;
+
+                    // if (/[\.|_]spec\.ts$/.test(moduleName) || /[\.|_]spec\.js$/.test(moduleName)) {
+                    if (module.hasOwnProperty(wrapperFN)) {
+                        if (wrapperFN && wrapperFN.length) {
+
+                            /**
+                             * Test files have a wrapper method around their describe blocks.
+                             * Trigger tests by calling the wrapper method.
+                             */
+                            module[wrapperFN]();
+                        }
+                    }
+
+                    var successMsg = 'Loaded: ' + moduleName;
+
+                    console.log(successMsg);
+
+
+                },
+                function(err) {
+
+                    console.log(JSON.stringify(err, null, 2));
+
+                    var errMsg = 'SystemJS Error loading module: ' + moduleName;
+
+                    console.log(errMsg);
+
+                })
+        }
+
+        function createPromiseChain(filesArray, importType) {
+            var promiseChain = Promise.resolve();
+
+            for (var i = 0; i < filesArray.length; i++) {
+                promiseChain = promiseChain.then((function(moduleName) {
+                    return function() {
+
+                        if (importType == 'preload') {
+                            return SystemImportPreload(moduleName);
+                        }
+
+                        if (importType == 'app') {
+                            return SystemImportApp(moduleName);
+                        }
+
+                        if (importType == 'spec') {
+                            return SystemImportSpecs(moduleName);
+                        }
+
+                    };
+                })(filesArray[i]))
+                    .catch(function(err) {
+                        console.log(err);
+                        console.log('Promise Error for module ' + filesArray[i]);
+                    });
+            }
+
+            return promiseChain;
+        }
+
+        function extractModuleName(fileName) {
+
+            if (karma.config.jspm.prefix) {
+                // fileName = karma.config.jspm.prefix + fileName;
+            }
+
+            if (stripExtension) {
+                return fileName.replace(/\.js$/, "");
+            }
+            return fileName;
+        }
     }
 })(window.__karma__, window.SystemJS);
