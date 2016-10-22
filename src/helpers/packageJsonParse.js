@@ -2,16 +2,23 @@ var path = require('path');
 var fs = require('fs');
 var CONS = require('./constants');
 var _ = require('lodash');
+var pHelper = require('./path.helpers');
 
 var pjson;
+var basePath;
+var pathToPackageJsonForTesting;
 
-function readPackageJson(pathToPackageJson) {
+function test(_pathToPackageJsonForTesting) {
+  pathToPackageJsonForTesting = _pathToPackageJsonForTesting;
+}
 
-  pathToPackageJson = (pathToPackageJson) ? pathToPackageJson : 'package.json';
+function readPackageJson() {
+
+  pathToPackageJsonForTesting = (pathToPackageJsonForTesting) ? pathToPackageJsonForTesting : 'package.json';
 
   if (!pjson) {
     try {
-      pjson = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), pathToPackageJson)));
+      pjson = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), pathToPackageJsonForTesting)));
     }
     catch (e) {
       pjson = {};
@@ -21,13 +28,7 @@ function readPackageJson(pathToPackageJson) {
   return pjson;
 }
 
-function destroy() {
-  pjson = null;
-}
-
 function getRelativePathToBase(basePath, relativePath) {
-
-
 
   var basePathArray = basePath.split(path.sep);
   var configPathArray = relativePath.split(path.sep);
@@ -56,15 +57,31 @@ function getRelativePathToBase(basePath, relativePath) {
 
 }
 
+// Add SystemJS loader and jspm config
+function getLoaderPath(fileName) {
+  var exists = glob.sync(pHelper.normalize(packagesPath, fileName + '@*.js'));
+  if (exists && exists.length != 0) {
+    return pHelper.normalize(packagesPath, fileName + '@*.js');
+  } else {
+    return pHelper.normalize(packagesPath, fileName + '.js');
+  }
+}
+
+function destroy() {
+  basePath = null;
+  pathToPackageJsonForTesting = null;
+  pjson = null;
+}
+
 /**
  * Paths are relative to project root directory
  *
- * @param pathToPackageJson - optional
+ * @param pathToPackageJsonForTesting - optional
  * @returns {{}}
  */
-function getJspmPackageJson(basePath, pathToPackageJson) {
+function getJspmPackageJson(basePath) {
 
-  var pjson = readPackageJson(pathToPackageJson);
+  var pjson = readPackageJson();
   var jspmConfig = {};
 
   var hasDirectories = ( pjson.jspm.directories !== undefined );
@@ -136,6 +153,7 @@ function getJspmPackageJson(basePath, pathToPackageJson) {
 }
 
 module.exports = {
+  test                    : test,
   getJspmPackageJson      : getJspmPackageJson,
   getRelativePathToBase   : getRelativePathToBase,
   destroy                 : destroy

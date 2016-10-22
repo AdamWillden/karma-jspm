@@ -16,27 +16,11 @@
 
 var glob = require('glob');
 var path = require('path');
+var pHelper = require('./helpers/path.helpers');
 var fs = require('fs');
-var filePattern = require('./helpers/file');
+var karmaPatterns = require('./helpers/karma.patterns');
 var pkgJsonParser = require('./helpers/packageJsonParse');
-
-
-function flatten(structure) {
-  return [].concat.apply([], structure);
-}
-
-function normalize() {
-
-  // not doing anything with ...args
-  var args = Array.prototype.slice.call(arguments);
-  var rawpath = path.join.apply(null, args);
-
-  return path.normalize(rawpath);
-}
-
-function hasValue(value) {
-  return value !== undefined && value !== null;
-}
+var validate = require('./helpers/validate');
 
 function initJspm(files, basePath, jspm, client, emitter) {
 
@@ -65,7 +49,7 @@ function initJspm(files, basePath, jspm, client, emitter) {
   if (jspm.meta !== undefined && typeof jspm.meta === 'object') {
     client.jspm.meta = jspm.meta;
   }
-  if (hasValue(jspm.testWrapperFunctionName)) {
+  if (validate.hasValue(jspm.testWrapperFunctionName)) {
     client.jspm.testWrapperFunctionName = jspm.testWrapperFunctionName;
   } else {
     client.jspm.testWrapperFunctionName = false;
@@ -79,7 +63,7 @@ function initJspm(files, basePath, jspm, client, emitter) {
   /**
    * adapter
    */
-  var defaultAdapter = normalize(__dirname, 'files', 'default-adapter.js');
+  var defaultAdapter = pHelper.normalize(__dirname, 'files', 'default-adapter.js');
   var adapter = null;
 
   if (jspm.adapter !== undefined) {
@@ -87,7 +71,7 @@ function initJspm(files, basePath, jspm, client, emitter) {
     if (jspm.adapter === 'angular2') {
       adapter = defaultAdapter;
     } else {
-      adapter = normalize(basePath, jspm.adapter);
+      adapter = pHelper.normalize(basePath, jspm.adapter);
     }
   } else {
     adapter = defaultAdapter;
@@ -114,67 +98,67 @@ function initJspm(files, basePath, jspm, client, emitter) {
   /**
    * Angular test files may wrap tests in a function named 'main'
    */
-  client.jspm.testWrapperFunctionName = (hasValue(jspm.testWrapperFunctionName)) ? jspm.testWrapperFunctionName : null;
+  client.jspm.testWrapperFunctionName = (validate.hasValue(jspm.testWrapperFunctionName)) ? jspm.testWrapperFunctionName : null;
 
 
-  var packagesPath = normalize(basePath, jspm.packages) + path.sep;
-  var browserPath = normalize(basePath, (jspm.browserConfig || ''));
-  var devPath = normalize(basePath, (jspm.dev || ''));
-  var nodePath = normalize(basePath, (jspm.node || ''));
+  var packagesPath = pHelper.normalize(basePath, jspm.packages) + path.sep;
+  var browserPath = pHelper.normalize(basePath, (jspm.browserConfig || ''));
+  var devPath = pHelper.normalize(basePath, (jspm.dev || ''));
+  var nodePath = pHelper.normalize(basePath, (jspm.node || ''));
   var configFiles = Array.isArray(jspm.config) ? jspm.config : [jspm.config];
   var configPaths = configFiles.map(function(config) {
-    return normalize(basePath, config);
+    return pHelper.normalize(basePath, config);
   });
 
   // Add SystemJS loader and jspm config
   function getLoaderPath(fileName) {
-    var exists = glob.sync(normalize(packagesPath, fileName + '@*.js'));
+    var exists = glob.sync(pHelper.normalize(packagesPath, fileName + '@*.js'));
     if (exists && exists.length != 0) {
-      return normalize(packagesPath, fileName + '@*.js');
+      return pHelper.normalize(packagesPath, fileName + '@*.js');
     } else {
-      return normalize(packagesPath, fileName + '.js');
+      return pHelper.normalize(packagesPath, fileName + '.js');
     }
   }
 
-  files.unshift(filePattern.createPattern(adapter));
+  files.unshift(karmaPatterns.createPattern(adapter));
 
   // Needed for JSPM 0.17 beta
   if (jspm.nodeConfig) {
-    files.unshift(filePattern.createPattern(nodePath));
+    files.unshift(karmaPatterns.createPattern(nodePath));
   }
 
   if (jspm.devConfig) {
-    files.unshift(filePattern.createPattern(devPath));
+    files.unshift(karmaPatterns.createPattern(devPath));
   }
 
   if (jspm.browserConfig) {
-    files.unshift(filePattern.createPattern(browserPath));
+    files.unshift(karmaPatterns.createPattern(browserPath));
   }
 
 
   Array.prototype.unshift.apply(files,
     configPaths.map(function(configPath) {
-      return filePattern.createPattern(configPath)
+      return karmaPatterns.createPattern(configPath)
     })
   );
 
   // Coverage
-  files.unshift(filePattern.createPattern(normalize(__dirname, 'files', 'hookSystemJS.js')));
-  files.unshift(filePattern.createPattern(normalize(__dirname, 'files', 'instrumenter.js')));
+  files.unshift(karmaPatterns.createPattern(pHelper.normalize(__dirname, 'files', 'hookSystemJS.js')));
+  files.unshift(karmaPatterns.createPattern(pHelper.normalize(__dirname, 'files', 'instrumenter.js')));
 
   // SystemJS
-  files.unshift(filePattern.createPattern(getLoaderPath('system.src')));
-  files.unshift(filePattern.createPattern(getLoaderPath('system-polyfills.src')));
-  files.unshift(filePattern.createPattern(normalize(__dirname, 'files', 'polyfills.js')));
+  files.unshift(karmaPatterns.createPattern(getLoaderPath('system.src')));
+  files.unshift(karmaPatterns.createPattern(getLoaderPath('system-polyfills.src')));
+  files.unshift(karmaPatterns.createPattern(pHelper.normalize(__dirname, 'files', 'polyfills.js')));
 
   // Loop through all of jspm.load_files and do two things
   // 1. Add all the files as "served" files to the files array
   // 2. Expand out and globs to end up with actual files for jspm to load.
   //    Store that in client.jspm.expandedFiles
   function addExpandedFiles() {
-    client.jspm.expandedFiles = flatten(jspm.loadFiles.map(function(file) {
-      files.push(filePattern.createServedPattern(normalize(basePath, (file.pattern || file)), typeof file !== 'string' ? file : null));
-      return filePattern.expandGlob(file, basePath);
+    client.jspm.expandedFiles = pHelper.flatten(jspm.loadFiles.map(function(file) {
+      files.push(karmaPatterns.createServedPattern(pHelper.normalize(basePath, (file.pattern || file)), typeof file !== 'string' ? file : null));
+      return karmaPatterns.expandGlob(file, basePath);
     }));
   }
 
@@ -184,13 +168,13 @@ function initJspm(files, basePath, jspm, client, emitter) {
 
   // Add served files to files array
   jspm.serveFiles.map(function(file) {
-    files.push(filePattern.createServedPattern(normalize(basePath, (file.pattern || file))));
+    files.push(karmaPatterns.createServedPattern(pHelper.normalize(basePath, (file.pattern || file))));
   });
 
   // Allow Karma to serve all files within jspm_packages.
   // This allows jspm/SystemJS to load them
-  var jspmPattern = filePattern.createServedPattern(
-    normalize(packagesPath, '!(system-polyfills.src.js|system.src.js)', '**'), {nocache: jspm.cachePackages !== true}
+  var jspmPattern = karmaPatterns.createServedPattern(
+    pHelper.normalize(packagesPath, '!(system-polyfills.src.js|system.src.js)', '**'), {nocache: jspm.cachePackages !== true}
   );
   jspmPattern.watched = false;
   files.push(jspmPattern);

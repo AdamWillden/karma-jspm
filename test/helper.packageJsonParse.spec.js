@@ -46,7 +46,11 @@
       it('should define directories.packages', function() {
 
         basePath = '/Users/jerryorta-dev/Dev/UIUXEngineering/src/client';
-        var karmaJspmConfig = pkg.getJspmPackageJson(basePath, pathToTestPackageJson('jspm.directores.baseURL-package.json'));
+
+        // For Testing Only
+        pkg.test(pathToTestPackageJson('jspm.directores.baseURL-package.json'));
+
+        var karmaJspmConfig = pkg.getJspmPackageJson(basePath);
 
         expect(karmaJspmConfig.directories).toBeDefined();
         expect(normalPath(karmaJspmConfig.directories.baseURL)).toEqual('');
@@ -57,7 +61,11 @@
       it('should define directories.packages', function() {
 
         basePath = '/Users/jerryorta-dev/Dev/UIUXEngineering/src/';
-        var karmaJspmConfig = pkg.getJspmPackageJson(basePath, pathToTestPackageJson('jspm.directores.baseURL-package.json'));
+
+        // For Testing Only
+        pkg.test(pathToTestPackageJson('jspm.directores.baseURL-package.json'));
+
+        var karmaJspmConfig = pkg.getJspmPackageJson(basePath);
 
         expect(karmaJspmConfig.directories).toBeDefined();
         expect(normalPath(karmaJspmConfig.directories.baseURL)).toEqual('client');
@@ -68,7 +76,11 @@
       it('should return packages path with baseURL', function() {
 
         basePath = '/Users/jerryorta-dev/Dev/UIUXEngineering/src/client';
-        var pjson = pkg.getJspmPackageJson(basePath, pathToTestPackageJson('jspm.directories-package.json'));
+
+        // For Testing Only
+        pkg.test(pathToTestPackageJson('jspm.directories-package.json'));
+
+        var pjson = pkg.getJspmPackageJson(basePath);
 
         expect(pjson.directories).toBeDefined();
         expect(normalPath(pjson.directories.baseURL)).toBe('');

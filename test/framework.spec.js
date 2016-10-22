@@ -139,4 +139,74 @@
       expect(client.jspm.testWrapperFunctionName).toBeNull();
     });
   });
+
+  describe('framework get packages', function() {
+    var files, jspm, client, emitter;
+    var basePath = path.resolve(__dirname, '..');
+    var pathToTestPackageJson;
+    var packageJsonParse = require('../src/helpers/packageJsonParse');
+
+    beforeEach(function() {
+
+
+
+      pathToTestPackageJson = function(pkgJson) {
+        return 'test/packageJson/' + pkgJson;
+      }
+
+      files = [];
+      jspm = {
+        browserConfig: 'custom_browser.js',
+        config: 'custom_config.js',
+        loadFiles: ['src/**/*.js', {
+          pattern: 'not-cached.js',
+          nocache: true
+        }, {pattern: 'not-watched.js', watched: false}],
+        packages: 'custom_packages/',
+        serveFiles: ['testfile.js'],
+        adapter: 'custom_adapter.js'
+      };
+      client = {};
+      emitter = {
+        on: function() {
+        }
+      };
+
+
+    });
+
+    afterEach(function() {
+      pathToTestPackageJson = null;
+      packageJsonParse.destroy();
+    });
+
+    afterAll(function() {
+      packageJsonParse = null;
+    });
+
+    it('should get custom_packages', function() {
+
+      basePath = '/Users/jerryorta-dev/Dev/UIUXEngineering/src/client';
+
+      // For Testing Only
+      packageJsonParse.test(pathToTestPackageJson('jspm.directores.baseURL-package.json'));
+
+      initFramework(files, basePath, jspm, client, emitter);
+      expect(jspm.packages).toEqual('custom_packages/');
+    });
+
+    it('should get jspm_packages', function() {
+
+      basePath = '/Users/jerryorta-dev/Dev/UIUXEngineering/src/client';
+
+      // For Testing Only
+      packageJsonParse.test(pathToTestPackageJson('jspm.directores.baseURL-package.json'));
+
+      delete jspm.packages;
+
+      initFramework(files, basePath, jspm, client, emitter);
+      expect(jspm.packages).toEqual('jspm_packages');
+    });
+
+  });
 }).call(this);
