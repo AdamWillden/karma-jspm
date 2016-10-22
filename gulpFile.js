@@ -161,7 +161,7 @@ function pushToMaster() {
 
 function tag() {
 
-  var tag = 'v' + pkg.version;
+  var tag = pkg.version;
   console.log('git tag ' + tag);
   return new Promise(function(resolve, reject) {
      git.tag(tag, 'release version ' + pkg.version, function(err) {
@@ -176,7 +176,7 @@ function tag() {
 
 function pushTag() {
 
-  var tag = 'v' + pkg.version;
+  var tag = pkg.version;
 
   console.log('git push origin ' + tag);
   return new Promise(function(resolve, reject) {
