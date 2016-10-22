@@ -10,7 +10,7 @@
     return path.replace(/\\/g, '/');
   };
 
-  describe('jspm plugin init', function() {
+  describe('jspm packageJsonParse', function() {
 
     var pathToTestPackageJson;
 

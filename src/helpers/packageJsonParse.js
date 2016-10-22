@@ -27,6 +27,8 @@ function destroy() {
 
 function getRelativePathToBase(basePath, relativePath) {
 
+
+
   var basePathArray = basePath.split(path.sep);
   var configPathArray = relativePath.split(path.sep);
 
@@ -57,7 +59,7 @@ function getRelativePathToBase(basePath, relativePath) {
 /**
  * Paths are relative to project root directory
  *
- * @param pathToPackageJson
+ * @param pathToPackageJson - optional
  * @returns {{}}
  */
 function getJspmPackageJson(basePath, pathToPackageJson) {
