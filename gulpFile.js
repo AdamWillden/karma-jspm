@@ -129,7 +129,7 @@ function add() {
 
 function commit() {
 
-  commitMessage = (commitMessage && commitMessage.length) ? commitMessage : 'bump to version v' + pkg.version;
+  commitMessage = (commitMessage && commitMessage.length) ? commitMessage : 'bump to version ' + pkg.version;
 
   console.log('git commit -m ' + commitMessage);
   return new Promise(function(resolve, reject) {
