@@ -1,0 +1,9 @@
+# Created by .ignore support plugin (hsz.mobi)
+
+test
+.eslintrc
+.gitignore
+.nvmrc
+.travis.yml
+appveyor.yml
+gulpFile.js
