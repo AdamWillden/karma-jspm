@@ -119,12 +119,20 @@
     //------  HELPER FUNCTIONS ------
     //------  HELPER FUNCTIONS ------
 
+    function isSpecRegex(path) {
+      return /.*?(\.[sS][pP][eE][cC]).[jtJT][sS]/.test(path);
+    }
+
+    function isTestRegex(path) {
+      return /.*?(\.[tT][eE][sS][tT]).[jtJT][sS]/.test(path);
+    }
+
     function isSpecFile(path) {
-      return path.slice(-7) == 'spec.ts';
+      return isSpecRegex(path) || isTestRegex(path);
     }
 
     function notSpecFile(path) {
-      return path.slice(-7) != 'spec.ts';
+      return !isSpecRegex(path) && !isTestRegex(path);
     }
 
     function SystemImportPreload(moduleName) {
