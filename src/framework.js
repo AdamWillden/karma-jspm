@@ -16,11 +16,11 @@
 
 var glob = require('glob');
 var path = require('path');
-var pHelper = require('./helpers/path.helpers');
+var pHelper = require('./helpers/helper.path');
 var fs = require('fs');
-var karmaPatterns = require('./helpers/karma.patterns');
-var pkgJsonParser = require('./helpers/packageJsonParse');
-var validate = require('./helpers/validate');
+var karmaPatterns = require('./helpers/helper.karma.patterns');
+var pkgJsonParser = require('./helpers/helper.packageJsonParse');
+var validate = require('./helpers/helper.validate');
 
 function initJspm(files, basePath, jspm, client, emitter) {
 

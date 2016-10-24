@@ -1,76 +1,15 @@
 var path = require('path');
 var fs = require('fs');
-var CONS = require('./constants');
+var CONS = require('./helper.constants');
 var _ = require('lodash');
-var pHelper = require('./path.helpers');
+var pHelper = require('./helper.path');
+var readPkgJson = require('./helper.readPackageJson');
+var getRelativePathToBase = require('./helper.getRelativePathToBase').getRelativePathToBase;
 
-var pjson;
 var basePath;
-var pathToPackageJsonForTesting;
-
-function test(_pathToPackageJsonForTesting) {
-  pathToPackageJsonForTesting = _pathToPackageJsonForTesting;
-}
-
-function readPackageJson() {
-
-  pathToPackageJsonForTesting = (pathToPackageJsonForTesting) ? pathToPackageJsonForTesting : 'package.json';
-
-  if (!pjson) {
-    try {
-      pjson = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), pathToPackageJsonForTesting)));
-    }
-    catch (e) {
-      pjson = {};
-    }
-  }
-
-  return pjson;
-}
-
-function getRelativePathToBase(basePath, relativePath) {
-
-  var basePathArray = basePath.split(path.sep);
-  var configPathArray = relativePath.split(path.sep);
-
-  if (_.last(basePathArray) === '') {
-    basePathArray = _.initial(basePathArray);
-  }
-
-  var configRelativePathArray = [];
-
-  _.forEachRight( _.clone(configPathArray), function(lastItem) {
-    if (lastItem === _.last(basePathArray)) {
-      basePathArray = _.initial(basePathArray);
-      configPathArray = _.initial(configPathArray);
-    } else {
-      configRelativePathArray.unshift(lastItem);
-    }
-  });
-
-  var finalPath = '';
-  if (configRelativePathArray.length) {
-    finalPath = _.join(configRelativePathArray, path.sep);
-  }
-
-  return finalPath;
-
-}
-
-// Add SystemJS loader and jspm config
-function getLoaderPath(fileName) {
-  var exists = glob.sync(pHelper.normalize(packagesPath, fileName + '@*.js'));
-  if (exists && exists.length != 0) {
-    return pHelper.normalize(packagesPath, fileName + '@*.js');
-  } else {
-    return pHelper.normalize(packagesPath, fileName + '.js');
-  }
-}
 
 function destroy() {
   basePath = null;
-  pathToPackageJsonForTesting = null;
-  pjson = null;
 }
 
 /**
@@ -81,7 +20,7 @@ function destroy() {
  */
 function getJspmPackageJson(basePath) {
 
-  var pjson = readPackageJson();
+  var pjson = readPkgJson.readPackageJson();
   var jspmConfig = {};
 
   var hasDirectories = ( pjson.jspm.directories !== undefined );
@@ -153,7 +92,7 @@ function getJspmPackageJson(basePath) {
 }
 
 module.exports = {
-  test                    : test,
+  test                    : readPkgJson.test,
   getJspmPackageJson      : getJspmPackageJson,
   getRelativePathToBase   : getRelativePathToBase,
   destroy                 : destroy

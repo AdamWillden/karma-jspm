@@ -144,7 +144,7 @@
     var files, jspm, client, emitter;
     var basePath = path.resolve(__dirname, '..');
     var pathToTestPackageJson;
-    var packageJsonParse = require('../src/helpers/packageJsonParse');
+    var packageJsonParse = require('../src/helpers/helper.packageJsonParse');
 
     beforeEach(function() {
 
