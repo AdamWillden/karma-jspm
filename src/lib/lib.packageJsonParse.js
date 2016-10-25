@@ -129,7 +129,7 @@ function getJspmPackageJson(basePath) {
    */
   if (hasDirectories) {
     if (hasPackages) {
-      cfg.directories.packages = getRelativePathToBase(basePath, path.normalize(pjson.directories.packages));
+      cfg.directories.packages = getRelativePathToBase(basePath, path.normalize(pjson.jspm.directories.packages));
     } else if (hasBaseUrl) {
       cfg.directories.packages = getRelativePathToBase(basePath, path.normalize(path.join(cfg.directories.baseURL, CONS.PACKAGES)));
     } else {

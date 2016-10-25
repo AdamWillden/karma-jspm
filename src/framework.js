@@ -24,7 +24,7 @@ var validate = require('./lib/lib.validate');
 
 function initJspm(files, basePath, jspm, client, emitter) {
 
-  var pjson = pkgJsonParser.getJspmPackageJson(basePath);
+  var cfg = pkgJsonParser.getJspmPackageJson(basePath);
 
   // Initialize jspm config if it wasn't specified in karma.conf.js
   if (!jspm) {
@@ -41,7 +41,7 @@ function initJspm(files, basePath, jspm, client, emitter) {
 
     jspm.jspmConfig = jspm.config;
   } else if (!jspm.jspmConfig) {
-    jspm.jspmConfig = pjson.jspmConfig;
+    jspm.jspmConfig = cfg.jspmConfig;
   }
 
   if (!jspm.loadFiles) {
@@ -51,7 +51,7 @@ function initJspm(files, basePath, jspm, client, emitter) {
     jspm.serveFiles = [];
   }
   if (!jspm.packages) {
-    jspm.packages = pjson.directories.packages;
+    jspm.packages = cfg.directories.packages;
   }
   if (!client.jspm) {
     client.jspm = {};
@@ -138,10 +138,10 @@ function initJspm(files, basePath, jspm, client, emitter) {
    * JSPM 0.17 beta
    */
   if (jspm.nodeConfig) {
-    var nodePath = pHelper.normalize(basePath, (pjson.nodeConfig));
+    var nodePath = pHelper.normalize(basePath, (cfg.nodeConfig));
 
     if (typeof jspm.nodeConfig == 'boolean') {
-      nodePath = pHelper.normalize(basePath, (pjson.nodeConfig));
+      nodePath = pHelper.normalize(basePath, (cfg.nodeConfig));
     } else if(typeof jspm.nodeConfig == 'string') {
       nodePath = pHelper.normalize(basePath, (jspm.nodeConfig));
     }
@@ -155,7 +155,7 @@ function initJspm(files, basePath, jspm, client, emitter) {
     var devPath;
 
     if (typeof jspm.devConfig == 'boolean') {
-      devPath = pHelper.normalize(basePath, (pjson.devConfig));
+      devPath = pHelper.normalize(basePath, (cfg.devConfig));
     } else if(typeof jspm.devConfig == 'string') {
       devPath = pHelper.normalize(basePath, (jspm.devConfig));
     }
@@ -170,7 +170,7 @@ function initJspm(files, basePath, jspm, client, emitter) {
     var browserPath;
 
     if (typeof jspm.browserConfig == 'boolean') {
-      browserPath = pHelper.normalize(basePath, (pjson.browserConfig));
+      browserPath = pHelper.normalize(basePath, (cfg.browserConfig));
     } else if(typeof jspm.browserConfig == 'string') {
       browserPath = pHelper.normalize(basePath, (jspm.browserConfig));
     }

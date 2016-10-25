@@ -14,8 +14,7 @@ function readPackageJson() {
   var pjson = {};
 
   try {
-    var rawPjson = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), pathToPackageJsonForTesting)));
-    pjson = rawPjson.jspm ? rawPjson.jspm : pjson;
+    pjson = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), pathToPackageJsonForTesting)));
   }
   catch (e) {
     pjson = {};
