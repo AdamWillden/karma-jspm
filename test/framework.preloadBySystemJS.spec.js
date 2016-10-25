@@ -17,7 +17,7 @@
       files = [];
       jspm = {
         browserConfig: 'custom_browser.js',
-        config: 'custom_config.js',
+        jspmConfig: 'custom_config.js',
         loadFiles: ['src/**/*.js', {
           pattern: 'not-cached.js',
           nocache: true
