@@ -28,7 +28,11 @@
     "url": "git@github.com:UIUXEngineering/karma-jspm.git"
   },
   "dependencies": {
+    "bluebird": "^3.0.5",
+    "chalk": "^1.1.1",
+    "core-js": "^2.4.1",
     "glob": "~3.2",
+    "graceful-fs": "^4.1.2",
     "istanbul": "^0.4.4",
     "lodash": "^4.13.1",
     "minimatch": "^3.0.2",

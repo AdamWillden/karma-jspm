@@ -111,7 +111,13 @@ config.set({
 
 For more complex architectures, additional configurations may be necessary.
 
-####config
+####config *DEPRECATED*  
+Use ```jspmConfig`.
+
+```config``` has been deprecated to align with jspm 0.l7 naming conventions.
+By default jspm names the base config ```jspm.config.js```.
+
+
 Optional  
 **Default**: *parsed from package.json*
 
@@ -127,6 +133,63 @@ config.set({
     jspm: {
         // relative to basePath in karma config
         config: "path/to/myJspmConfig.js"
+    }
+}    
+```
+
+####browserConfig
+*JSPM 0.17 Beta*  
+Optional  
+**Default**: *undefined*
+
+For JSPM 0.17 Beta, you can to specify `jspm.browser.js`.
+
+```js
+config.set({
+
+    basePath: './src/client',
+    
+    jspm: {
+        // relative to basePath in karma config
+        browserConfig: "path/to/myJspmBrowser.js"
+    }
+}    
+```
+
+####devConfig
+*JSPM 0.17 Beta*  
+Optional  
+**Default**: *undefined*
+
+For JSPM 0.17 Beta, you can to specify `jspm.dev.js`.
+
+```js
+config.set({
+
+    basePath: './src/client',
+    
+    jspm: {
+        // relative to basePath in karma config
+        devConfig: "path/to/myJspmDev.js"
+    }
+}    
+```
+
+####nodeConfig
+*JSPM 0.17 Beta*  
+Optional  
+**Default**: *undefined*
+
+For JSPM 0.17 Beta, you can to specify `jspm.node.js` file.
+
+```js
+config.set({
+
+    basePath: './src/client',
+    
+    jspm: {
+        // relative to basePath in karma config
+        nodeConfig: "path/to/myJsonNode.js" 
     }
 }    
 ```
@@ -147,63 +210,6 @@ config.set({
     jspm: {
         // relative to basePath in karma config
         packages: "path/to/my_jspm_modules/"
-    }
-}    
-```
-
-####browserConfig
-*JSPM 0.17 Beta*  
-Optional  
-**Default**: *undefined*
-
-For JSPM 0.17 Beta, you can to specify the `jspm.browser.js`.
-
-```js
-config.set({
-
-    basePath: './src/client',
-    
-    jspm: {
-        // relative to basePath in karma config
-        browserConfig: "path/to/myJspmBrowser.js"
-    }
-}    
-```
-
-####devConfig
-*JSPM 0.17 Beta*  
-Optional  
-**Default**: *undefined*
-
-For JSPM 0.17 Beta, you can to specify the `jspm.dev.js`.
-
-```js
-config.set({
-
-    basePath: './src/client',
-    
-    jspm: {
-        // relative to basePath in karma config
-        devConfig: "path/to/myJspmDev.js"
-    }
-}    
-```
-
-####nodeConfig
-*JSPM 0.17 Beta*  
-Optional  
-**Default**: *undefined*
-
-For JSPM 0.17 Beta, you can to specify the `jspm.node.js` file.
-
-```js
-config.set({
-
-    basePath: './src/client',
-    
-    jspm: {
-        // relative to basePath in karma config
-        nodeConfig: "path/to/myJsonNode.js" 
     }
 }    
 ```

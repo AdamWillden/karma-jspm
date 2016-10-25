@@ -1,0 +1,11 @@
+{
+  "description": "baseURL defined",
+  "jspm": {
+    "configFiles": {
+      "jspm": "src/browser/jspm.config.js",
+      "jspm:dev": "jspm.dev.js",
+      "jspm:browser": "jspm.browser.js",
+      "jspm:node": "jspm.node.js"
+    }
+  }
+}

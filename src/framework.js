@@ -16,21 +16,34 @@
 
 var glob = require('glob');
 var path = require('path');
-var pHelper = require('./helpers/helper.path');
+var pHelper = require('./lib/lib.path');
 var fs = require('fs');
-var karmaPatterns = require('./helpers/helper.karma.patterns');
-var pkgJsonParser = require('./helpers/helper.packageJsonParse');
-var validate = require('./helpers/helper.validate');
+var karmaPatterns = require('./lib/lib.karma.patterns');
+var pkgJsonParser = require('./lib/lib.packageJsonParse');
+var validate = require('./lib/lib.validate');
 
 function initJspm(files, basePath, jspm, client, emitter) {
+
+  var pjson = pkgJsonParser.getJspmPackageJson(basePath);
 
   // Initialize jspm config if it wasn't specified in karma.conf.js
   if (!jspm) {
     jspm = {};
   }
-  if (!jspm.config) {
-    jspm.config = pkgJsonParser.getJspmPackageJson(basePath).configFile || 'jspm.config.js';
+
+  if(jspm.config) {
+
+    var msg = 'config property has been deprecated ' +
+      'for `jspmConfig` to be more aligned with jspm config ' +
+      'naming conventions. `config` will be removed in 4.0.';
+
+    console.warn(msg);
+
+    jspm.jspmConfig = jspm.config;
+  } else if (!jspm.jspmConfig) {
+    jspm.jspmConfig = pjson.jspmConfig;
   }
+
   if (!jspm.loadFiles) {
     jspm.loadFiles = [];
   }
@@ -38,7 +51,7 @@ function initJspm(files, basePath, jspm, client, emitter) {
     jspm.serveFiles = [];
   }
   if (!jspm.packages) {
-    jspm.packages = pkgJsonParser.getJspmPackageJson(basePath).directories.packages || 'jspm_packages/';
+    jspm.packages = pjson.directories.packages;
   }
   if (!client.jspm) {
     client.jspm = {};
@@ -102,10 +115,7 @@ function initJspm(files, basePath, jspm, client, emitter) {
 
 
   var packagesPath = pHelper.normalize(basePath, jspm.packages) + path.sep;
-  var browserPath = pHelper.normalize(basePath, (jspm.browserConfig || ''));
-  var devPath = pHelper.normalize(basePath, (jspm.dev || ''));
-  var nodePath = pHelper.normalize(basePath, (jspm.node || ''));
-  var configFiles = Array.isArray(jspm.config) ? jspm.config : [jspm.config];
+  var configFiles = Array.isArray(jspm.jspmConfig) ? jspm.jspmConfig : [jspm.jspmConfig];
   var configPaths = configFiles.map(function(config) {
     return pHelper.normalize(basePath, config);
   });
@@ -122,17 +132,50 @@ function initJspm(files, basePath, jspm, client, emitter) {
 
   files.unshift(karmaPatterns.createPattern(adapter));
 
-  // Needed for JSPM 0.17 beta
+  /**
+   * JSPM 0.17 beta
+   */
   if (jspm.nodeConfig) {
-    files.unshift(karmaPatterns.createPattern(nodePath));
+    var nodePath = pHelper.normalize(basePath, (pjson.nodeConfig));
+
+    if (typeof jspm.nodeConfig == 'boolean') {
+      nodePath = pHelper.normalize(basePath, (pjson.nodeConfig));
+    } else if(typeof jspm.nodeConfig == 'string') {
+      nodePath = pHelper.normalize(basePath, (jspm.nodeConfig));
+    }
+
+    if (nodePath) {
+      files.unshift(karmaPatterns.createPattern(devPath));
+    }
   }
 
   if (jspm.devConfig) {
-    files.unshift(karmaPatterns.createPattern(devPath));
+    var devPath;
+
+    if (typeof jspm.devConfig == 'boolean') {
+      devPath = pHelper.normalize(basePath, (pjson.devConfig));
+    } else if(typeof jspm.devConfig == 'string') {
+      devPath = pHelper.normalize(basePath, (jspm.devConfig));
+    }
+
+    if (devPath) {
+      files.unshift(karmaPatterns.createPattern(devPath));
+    }
   }
 
   if (jspm.browserConfig) {
-    files.unshift(karmaPatterns.createPattern(browserPath));
+
+    var browserPath;
+
+    if (typeof jspm.browserConfig == 'boolean') {
+      browserPath = pHelper.normalize(basePath, (pjson.browserConfig));
+    } else if(typeof jspm.browserConfig == 'string') {
+      browserPath = pHelper.normalize(basePath, (jspm.browserConfig));
+    }
+
+    if (browserPath) {
+      files.unshift(karmaPatterns.createPattern(browserPath));
+    }
   }
 
 

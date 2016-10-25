@@ -2,15 +2,15 @@
   /*global describe, expect, it, beforeEach*/
 
   var path = require('path');
-  var pkg = require('../src/helpers/helper.packageJsonParse');
+  var pkg = require('../src/lib/lib.packageJsonParse');
   var _ = require('lodash');
-  var CONS = require('../src/helpers/helper.constants');
+  var CONS = require('../src/lib/lib.constants');
 
   var normalPath = function(path) {
     return path.replace(/\\/g, '/');
   };
 
-  describe('jspm helper.packageJsonParse', function() {
+  describe('jspm lib.packageJsonParse', function() {
 
     var pathToTestPackageJson;
 

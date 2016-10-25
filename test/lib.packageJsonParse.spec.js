@@ -2,15 +2,15 @@
   /*global describe, expect, it, beforeEach*/
 
   var path = require('path');
-  var pkg = require('../src/helpers/helper.packageJsonParse');
+  var pkg = require('../src/lib/lib.packageJsonParse');
   var _ = require('lodash');
-  var CONS = require('../src/helpers/helper.constants');
+  var CONS = require('../src/lib/lib.constants');
 
   var normalPath = function(path) {
     return path.replace(/\\/g, '/');
   };
 
-  describe('jspm helper.packageJsonParse', function() {
+  describe('jspm lib.packageJsonParse', function() {
 
     var pathToTestPackageJson;
 
@@ -53,7 +53,7 @@
         var karmaJspmConfig = pkg.getJspmPackageJson(basePath);
 
         expect(karmaJspmConfig.directories).toBeDefined();
-        expect(normalPath(karmaJspmConfig.directories.baseURL)).toEqual('');
+        expect(normalPath(karmaJspmConfig.directories.baseURL)).toEqual('src/client');
         expect(normalPath(karmaJspmConfig.directories.packages)).toEqual('jspm_packages');
 
       });
@@ -68,7 +68,7 @@
         var karmaJspmConfig = pkg.getJspmPackageJson(basePath);
 
         expect(karmaJspmConfig.directories).toBeDefined();
-        expect(normalPath(karmaJspmConfig.directories.baseURL)).toEqual('client');
+        expect(normalPath(karmaJspmConfig.directories.baseURL)).toEqual('src/client');
         expect(normalPath(karmaJspmConfig.directories.packages)).toEqual('client/jspm_packages');
 
       });
@@ -88,18 +88,6 @@
 
       });
 
-      it('should return packages path with baseURL', function() {
-
-        basePath = '/Users/jerryorta-dev/Dev/UIUXEngineering/src/client';
-
-        // For Testing Only
-        pkg.test(pathToTestPackageJson('jspm.directories-package.json'));
-
-        var pjson = pkg.getJspmPackageJson(basePath);
-
-        console.log(pjson);
-
-      });
     });
 
   });
