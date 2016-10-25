@@ -31,7 +31,7 @@ function initJspm(files, basePath, jspm, client, emitter) {
     jspm = {};
   }
 
-  if(jspm.config) {
+  if(jspm.config && !jspm.jspmConfig) {
 
     var msg = 'config property has been deprecated ' +
       'for `jspmConfig` to be more aligned with jspm config ' +
@@ -119,6 +119,8 @@ function initJspm(files, basePath, jspm, client, emitter) {
   var configPaths = configFiles.map(function(config) {
     return pHelper.normalize(basePath, config);
   });
+
+  // console.log(configFiles);
 
   // Add SystemJS loader and jspm config
   function getLoaderPath(fileName) {
