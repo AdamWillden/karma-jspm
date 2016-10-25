@@ -15,7 +15,7 @@
       files = [];
       jspm = {
         browserConfig: 'custom_browser.js',
-        config: 'custom_config.js',
+        jspmConfig: 'custom_config.js',
         loadFiles: ['test/filesToLoad/loadFiles/**/*.js', {
           pattern: 'not-cached.js',
           nocache: true
@@ -99,7 +99,7 @@
       files = [];
       jspm = {
         browserConfig: 'custom_browser.js',
-        config: 'custom_config.js',
+        jspmConfig: 'custom_config.js',
         loadFiles: ['test/filesToLoad/loadFiles/**/*.js', {
           pattern: 'not-cached.js',
           nocache: true
@@ -117,7 +117,7 @@
 
 
     it('should support an array of config files', function() {
-      jspm.config = ['custom_config.js', 'another_config.js'];
+      jspm.jspmConfig = ['custom_config.js', 'another_config.js'];
       files = [];
       initFramework(files, basePath, jspm, client, emitter);
 
@@ -136,7 +136,7 @@
       files = [];
       jspm = {
         browserConfig: 'custom_browser.js',
-        config: 'custom_config.js',
+        jspmConfig: 'custom_config.js',
         loadFiles: ['src/**/*.js', {
           pattern: 'not-cached.js',
           nocache: true
@@ -181,7 +181,7 @@
       files = [];
       jspm = {
         browserConfig: 'custom_browser.js',
-        config: 'custom_config.js',
+        jspmConfig: 'custom_config.js',
         loadFiles: ['src/**/*.js', {
           pattern: 'not-cached.js',
           nocache: true
@@ -243,7 +243,6 @@
       jspm = {
         jspmConfig: 'custom.jspm.config.js',
         browserConfig: 'custom_browser.js',
-        config: 'custom_config.js',
         loadFiles: ['test/filesToLoad/loadFiles/**/*.js', {
           pattern: 'not-cached.js',
           nocache: true
