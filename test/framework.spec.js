@@ -32,7 +32,7 @@
     });
 
     it('should add config.js to the top of the files array', function() {
-      expect(normalPath(files[5].pattern)).toEqual(normalPath(basePath + '/custom_config.js'));
+      expect(normalPath(files[6].pattern)).toEqual(normalPath(basePath + '/custom_config.js'));
       expect(files[5].included).toEqual(true);
     });
 
@@ -121,8 +121,8 @@
       files = [];
       initFramework(files, basePath, jspm, client, emitter);
 
-      expect(normalPath(files[5].pattern)).toEqual(normalPath(basePath + '/custom_config.js'));
-      expect(normalPath(files[6].pattern)).toEqual(normalPath(basePath + '/another_config.js'));
+      expect(normalPath(files[6].pattern)).toEqual(normalPath(basePath + '/custom_config.js'));
+      expect(normalPath(files[7].pattern)).toEqual(normalPath(basePath + '/another_config.js'));
     });
 
 
@@ -259,12 +259,12 @@
     });
 
     it('should add custom.jspm.config.js to the top of the files array', function() {
-      expect(normalPath(files[5].pattern)).toEqual(normalPath(basePath + '/custom.jspm.config.js'));
+      expect(normalPath(files[6].pattern)).toEqual(normalPath(basePath + '/custom.jspm.config.js'));
       expect(files[6].included).toEqual(true);
     });
 
     it('should add custom_browser.js to the top of the files array', function() {
-      expect(normalPath(files[6].pattern)).toEqual(normalPath(basePath + '/custom_browser.js'));
+      expect(normalPath(files[5].pattern)).toEqual(normalPath(basePath + '/custom_browser.js'));
       expect(files[6].included).toEqual(true);
     });
 

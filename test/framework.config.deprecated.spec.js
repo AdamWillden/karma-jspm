@@ -35,7 +35,7 @@ var _ = require('lodash');
 
     it('should should work if deprecated', function() {
       initFramework(files, basePath, jspm, client, emitter);
-      expect(normalPath(files[5].pattern)).toEqual(normalPath(basePath + '/custom_config.js'));
+      expect(normalPath(files[6].pattern)).toEqual(normalPath(basePath + '/custom_config.js'));
       expect(files[5].included).toEqual(true);
     });
 
@@ -71,8 +71,8 @@ var _ = require('lodash');
       files = [];
       initFramework(files, basePath, jspm, client, emitter);
 
-      expect(normalPath(files[5].pattern)).toEqual(normalPath(basePath + '/custom_config.js'));
-      expect(normalPath(files[6].pattern)).toEqual(normalPath(basePath + '/another_config.js'));
+      expect(normalPath(files[6].pattern)).toEqual(normalPath(basePath + '/custom_config.js'));
+      expect(normalPath(files[7].pattern)).toEqual(normalPath(basePath + '/another_config.js'));
     });
 
 
@@ -112,7 +112,7 @@ var _ = require('lodash');
         return o.pattern.indexOf('custom_config.js') != -1;
       });
 
-      expect(normalPath(files[5].pattern)).toEqual(normalPath(basePath + '/custom_jspm_config.js'));
+      expect(normalPath(files[6].pattern)).toEqual(normalPath(basePath + '/custom_jspm_config.js'));
       expect(configs.length).toEqual(0);
     });
 
