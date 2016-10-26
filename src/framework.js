@@ -135,6 +135,25 @@ function initJspm(files, basePath, jspm, client, emitter) {
   files.unshift(karmaPatterns.createPattern(adapter));
 
   /**
+   * The load order will be
+   * jspm.browser.js, jspm.dev.js, jspm.node.js, jspm.config.js
+   *
+   * if a baseURL is provide, it needs to be
+   * in jspm.browser.js, or you will get an error
+   * similar to "baseURL must be set in the first
+   * SystemJS call".
+   *
+   * jspm.config.js
+   */
+  Array.prototype.unshift.apply(files,
+    configPaths.map(function(configPath) {
+      return karmaPatterns.createPattern(configPath)
+    })
+  );
+
+  /**
+   * jspm.node.js
+   *
    * JSPM 0.17 beta
    */
   if (jspm.nodeConfig) {
@@ -151,6 +170,9 @@ function initJspm(files, basePath, jspm, client, emitter) {
     }
   }
 
+  /**
+   * jspm.dev.js
+   */
   if (jspm.devConfig) {
     var devPath;
 
@@ -165,6 +187,9 @@ function initJspm(files, basePath, jspm, client, emitter) {
     }
   }
 
+  /**
+   * jspm.browser.js
+   */
   if (jspm.browserConfig) {
 
     var browserPath;
@@ -179,13 +204,6 @@ function initJspm(files, basePath, jspm, client, emitter) {
       files.unshift(karmaPatterns.createPattern(browserPath));
     }
   }
-
-
-  Array.prototype.unshift.apply(files,
-    configPaths.map(function(configPath) {
-      return karmaPatterns.createPattern(configPath)
-    })
-  );
 
   // Coverage
   files.unshift(karmaPatterns.createPattern(pHelper.normalize(__dirname, 'files', 'hookSystemJS.js')));
