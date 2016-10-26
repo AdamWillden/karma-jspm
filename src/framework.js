@@ -33,8 +33,8 @@ function initJspm(files, basePath, jspm, client, emitter) {
 
   if(jspm.config && !jspm.jspmConfig) {
 
-    var msg = 'config property has been deprecated ' +
-      'for `jspmConfig` to be more aligned with jspm config ' +
+    var msg = 'DEPRECATED: The jspm config property in karma config has been deprecated ' +
+      'for `jspmConfig` to be more aligned with jspm ' +
       'naming conventions. `config` will be removed in 4.0.';
 
     console.warn(msg);
