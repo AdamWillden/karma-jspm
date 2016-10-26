@@ -5,7 +5,9 @@
 [![Join the chat at https://gitter.im/UIUXEngineering/karma-jspm](https://badges.gitter.im/UIUXEngineering/karma-jspm.svg)](https://gitter.im/UIUXEngineering/karma-jspm?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
-**This plugin can now support angular 2.0.0 and JSPM 0.17 beta**
+**This plugin can now support angular 2.0.0 and JSPM 0.29 beta**
+
+See this [Test Repo](https://github.com/UIUXEngineering/karma-jspm-test) for configurations and examples.
 
 This plugin is originally a fork of [Workiva/karma-jspm](https://github.com/Workiva/karma-jspm). 
 Among the additional features, this version utilizes SystemJS to load, 
@@ -111,31 +113,21 @@ config.set({
 
 For more complex architectures, additional configurations may be necessary.
 
-####config *DEPRECATED*  
-Use ```jspmConfig`.
 
-```config``` has been deprecated to align with jspm 0.l7 naming conventions.
-By default jspm names the base config ```jspm.config.js```.
+###JSPM 0.17 Beta Config files - Notes
+Config files are loading in this order, regardless of which file may be excluded:
 
+browserConfig, devConfig, nodeConfig, jspmConfig
 
-Optional  
-**Default**: *parsed from package.json*
+browserConfig is first because it normally contains "baseURL", which SystemJS 
+throws an error if it is not in the first config called.
 
-You may have named your jspm `config.js`. The package.json configuration
-for jspm beta may change; if you have issues, provide the path to 
-your config file.
+jspmConfig is last because it normally contains mapping, packages, and transpiler information.
 
-```js
-config.set({
-
-    basePath: './src/client',
-    
-    jspm: {
-        // relative to basePath in karma config
-        config: "path/to/myJspmConfig.js"
-    }
-}    
-```
+As you will see in the [Test Repo](https://github.com/UIUXEngineering/karma-jspm-test) there are two transpilers. 
+The default ( primary ) is the one which is assinged to the ```transpiler``` property ( babel in the test repo ). 
+ The additional (secodndary) just has configuration options ( TypeScript in the [Test Repo](https://github.com/UIUXEngineering/karma-jspm-test) ). In my expirements the secondary MUST be 
+in the same file/config which the package is defined to use it as a loader.
 
 ####browserConfig
 *JSPM 0.17 Beta*  
@@ -193,6 +185,33 @@ config.set({
     }
 }    
 ```
+
+####config *DEPRECATED*  
+Use ```jspmConfig````.
+
+```config``` has been deprecated to align with jspm 0.l7 naming conventions.
+By default jspm names the base config ```jspm.config.js```.
+
+####jspmConfig
+Optional  
+**Default**: *parsed from package.json*
+
+You may have named your jspm `config.js`. The package.json configuration
+for jspm beta may change; if you have issues, provide the path to 
+your config file.
+
+```js
+config.set({
+
+    basePath: './src/client',
+    
+    jspm: {
+        // relative to basePath in karma config
+        config: "path/to/myJspmConfig.js"
+    }
+}    
+```
+
 
 ####packages
 Optional  
