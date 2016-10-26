@@ -5,7 +5,7 @@
 [![Join the chat at https://gitter.im/UIUXEngineering/karma-jspm](https://badges.gitter.im/UIUXEngineering/karma-jspm.svg)](https://gitter.im/UIUXEngineering/karma-jspm?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 
-**This plugin can now support angular 2.0.0 and JSPM 0.29 beta**
+**This plugin can now support angular 2.1.1 and JSPM 0.29 beta**
 
 See this [Test Repo](https://github.com/UIUXEngineering/karma-jspm-test) for configurations and examples.
 
