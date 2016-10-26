@@ -20,6 +20,10 @@ remapped to the original TypeScript or ES6 source code.
 
 See a sample implementation of this plugin at [angular2-jspm-typescript-seed](https://github.com/UIUXEngineering/angular2-jspm-typescript-seed).
 
+You may use this [Test Repo](https://github.com/UIUXEngineering/karma-jspm-test) to see sample configurations, test scenarios, 
+or to submit a PR to demo bugs. The [Test Repo](https://github.com/UIUXEngineering/karma-jspm-test) is used for Mac and PC 
+testing.
+
 ##Installation
 
 Available in npm: `npm install karma-uiuxengineering-jspm --save-dev`
@@ -115,7 +119,7 @@ For more complex architectures, additional configurations may be necessary.
 
 
 ###JSPM 0.17 Beta Config files - Notes
-Config files are loading in this order, regardless of which file may be excluded:
+Config files are loaded in this following order, regardless of which file may be excluded:
 
 browserConfig, devConfig, nodeConfig, jspmConfig
 
