@@ -55,11 +55,11 @@ gulp.task('changelog', () => {
     .pipe(gulp.dest('./'));
 });
 
-gulp.task('bump.major', function(){
+gulp.task('bump.major', function(done){
   pushVersion(done, {bumpType: 'major'});
 });
 
-gulp.task('bump.minor', function(){
+gulp.task('bump.minor', function(done){
   pushVersion(done, {bumpType: 'minor'});
 });
 
