@@ -4,7 +4,13 @@
   // Port from karma-jspm adapter
   // See https://github.com/Workiva/karma-jspm/blob/master/src/adapter.js
   // ========================================
-  console.log('default-adapter.js running');
+  var adapterMsg = '';
+
+  if (karma.config.jspm.adapter) {
+    adapterMsg = ' with ' + karma.config.jspm.adapter + ' configuration.';
+  }
+
+  console.log('default-adapter.js running' + adapterMsg);
 
   if (!System) {
     throw new Error("SystemJS was not found. Please make sure you have " +

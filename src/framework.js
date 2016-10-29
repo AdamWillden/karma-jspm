@@ -110,6 +110,7 @@ function initJspm(files, basePath, jspm, client, emitter) {
 
     if (jspm.adapter === 'angular2') {
       adapter = defaultAdapter;
+      client.jspm.adapter = 'angular2';
     } else {
       adapter = pHelper.normalize(basePath, jspm.adapter);
     }
