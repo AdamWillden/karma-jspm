@@ -56,15 +56,11 @@ gulp.task('changelog', () => {
 });
 
 gulp.task('bump.major', function(){
-  gulp.src('./package.json')
-    .pipe(bump({type:'major'}))
-    .pipe(gulp.dest('./'));
+  pushVersion(done, {bumpType: 'major'});
 });
 
 gulp.task('bump.minor', function(){
-  gulp.src('./package.json')
-    .pipe(bump({type:'minor'}))
-    .pipe(gulp.dest('./'));
+  pushVersion(done, {bumpType: 'minor'});
 });
 
 
