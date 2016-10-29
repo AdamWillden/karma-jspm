@@ -16,6 +16,7 @@
 
 var glob = require('glob');
 var path = require('path');
+var _ = require('lodash');
 var pHelper = require('./lib/lib.path');
 var fs = require('fs');
 var karmaPatterns = require('./lib/lib.karma.patterns');
@@ -44,12 +45,38 @@ function initJspm(files, basePath, jspm, client, emitter) {
     jspm.jspmConfig = cfg.jspmConfig;
   }
 
-  if (!jspm.loadFiles) {
-    jspm.loadFiles = [];
+  if (!jspm.files) {
+    jspm.files = [];
   }
-  if (!jspm.serveFiles) {
-    jspm.serveFiles = [];
+
+  /**
+   * @DEPRECATED
+   */
+  if (jspm.loadFiles) {
+
+    var msg = 'DEPRECATED: The jspm loadFiles property in karma config has been deprecated ' +
+      'for `files` to align with the SystemJS loader. `loadFiles` will be removed in 4.0.';
+
+    console.warn(msg);
+
+    jspm.files = jspm.files.concat(jspm.loadFiles);
   }
+
+
+
+  /**
+   *  @DEPRECATED
+   */
+  if (jspm.serveFiles) {
+
+    var msg = 'DEPRECATED: The jspm serveFiles property in karma config has been deprecated ' +
+      'for `files` to align with the SystemJS loader. `serveFiles` will be removed in 4.0.';
+
+    console.warn(msg);
+
+    jspm.files = jspm.files.concat(jspm.serveFiles);
+  }
+
   if (!jspm.packages) {
     jspm.packages = cfg.directories.packages;
   }
@@ -217,22 +244,49 @@ function initJspm(files, basePath, jspm, client, emitter) {
   // Loop through all of jspm.load_files and do two things
   // 1. Add all the files as "served" files to the files array
   // 2. Expand out and globs to end up with actual files for jspm to load.
-  //    Store that in client.jspm.expandedFiles
+  //    Store that in client.jspm.specFilesLoadedBySystemJS
   function addExpandedFiles() {
-    client.jspm.expandedFiles = pHelper.flatten(jspm.loadFiles.map(function(file) {
-      files.push(karmaPatterns.createServedPattern(pHelper.normalize(basePath, (file.pattern || file)), typeof file !== 'string' ? file : null));
-      return karmaPatterns.expandGlob(file, basePath);
-    }));
+
+    var expandedGlobOfSpecFiles = client.jspm.specFilesLoadedBySystemJS = [];
+
+    jspm.files.forEach(function(file) {
+      var filePattern = (file.pattern || file);
+
+      // Add filePath to karma files property
+      files.push(karmaPatterns.createSystemJSPattern(pHelper.normalize(basePath, filePattern)));
+
+      pHelper.flatten(karmaPatterns.expandGlob(filePattern, basePath)).forEach(function(fileStringPath) {
+
+        // Add to client.jspm.specFilesLoadedBySystemJS if .spec or .test file.
+        if (validate.isSpecRegex(fileStringPath) || validate.isTestRegex(fileStringPath)) {
+          expandedGlobOfSpecFiles.push(fileStringPath);
+        }
+      });
+
+    });
+
+    // Just in case the glob pattern is incorrect
+    client.jspm.specFilesLoadedBySystemJS = _.uniqBy(expandedGlobOfSpecFiles);
+
+    // client.jspm.specFilesLoadedBySystemJS = pHelper.flatten(jspm.loadFiles.map(function(file) {
+    //   files.push(karmaPatterns.createServedPattern(pHelper.normalize(basePath, (file.pattern || file)), typeof file !== 'string' ? file : null));
+    //   return karmaPatterns.expandGlob(file, basePath);
+    // }));
+
+
   }
 
   addExpandedFiles();
 
   emitter.on('file_list_modified', addExpandedFiles);
 
+  /**
+   * @DEPRECATED
+   */
   // Add served files to files array
-  jspm.serveFiles.map(function(file) {
-    files.push(karmaPatterns.createServedPattern(pHelper.normalize(basePath, (file.pattern || file))));
-  });
+  // jspm.serveFiles.map(function(file) {
+  //   files.push(karmaPatterns.createSystemJSPattern(pHelper.normalize(basePath, (file.pattern || file))));
+  // });
 
   // Allow Karma to serve all files within jspm_packages.
   // This allows jspm/SystemJS to load them

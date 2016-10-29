@@ -18,12 +18,19 @@ var _ = require('lodash');
       jspm = {
         browserConfig: 'custom_browser.js',
         config: 'custom_config.js',
-        loadFiles: ['test/filesToLoad/loadFiles/**/*.js', {
-          pattern: 'not-cached.js',
-          nocache: true
-        }, {pattern: 'not-watched.js', watched: false}],
-        packages: 'custom_packages/',
-        serveFiles: ['test/filesToLoad/servedFiles/fileC.js']
+        files: [
+          'test/filesToLoad/loadFiles/**/*.js',
+          {
+            pattern: 'not-cached.js',
+            nocache: true
+          },
+          {
+            pattern: 'not-watched.js',
+            watched: false
+          },
+          'test/filesToLoad/servedFiles/fileC.js'
+        ],
+        packages: 'custom_packages/'
       };
       client = {};
       emitter = {
@@ -50,12 +57,19 @@ var _ = require('lodash');
       jspm = {
         browserConfig: 'custom_browser.js',
         config: 'custom_config.js',
-        loadFiles: ['test/filesToLoad/loadFiles/**/*.js', {
-          pattern: 'not-cached.js',
-          nocache: true
-        }, {pattern: 'not-watched.js', watched: false}],
-        packages: 'custom_packages/',
-        serveFiles: ['test/filesToLoad/servedFiles/fileC.js']
+        files: [
+          'test/filesToLoad/loadFiles/**/*.js',
+          {
+            pattern: 'not-cached.js',
+            nocache: true
+          },
+          {
+            pattern: 'not-watched.js',
+            watched: false
+          },
+          'test/filesToLoad/servedFiles/fileC.js'
+        ],
+        packages: 'custom_packages/'
       };
       client = {};
       emitter = {
@@ -88,12 +102,19 @@ var _ = require('lodash');
         browserConfig: 'custom_browser.js',
         config: 'custom_config.js',
         jspmConfig: 'custom_jspm_config.js',
-        loadFiles: ['test/filesToLoad/loadFiles/**/*.js', {
-          pattern: 'not-cached.js',
-          nocache: true
-        }, {pattern: 'not-watched.js', watched: false}],
-        packages: 'custom_packages/',
-        serveFiles: ['test/filesToLoad/servedFiles/fileC.js']
+        loadFiles: [
+          'test/filesToLoad/loadFiles/**/*.js',
+          {
+            pattern: 'not-cached.js',
+            nocache: true
+          },
+          {
+            pattern: 'not-watched.js',
+            watched: false
+          },
+          'test/filesToLoad/servedFiles/fileC.js'
+        ],
+        packages: 'custom_packages/'
       };
       client = {};
       emitter = {

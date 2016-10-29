@@ -7,7 +7,7 @@
     return path.replace(/\\/g, '/');
   };
 
-  describe('jspm plugin init', function() {
+  describe('loadFiles and serveFiles deprecated', function() {
     var files, jspm, client, emitter;
     var basePath = path.resolve(__dirname, '..');
 
@@ -16,19 +16,12 @@
       jspm = {
         browserConfig: 'custom_browser.js',
         jspmConfig: 'custom_config.js',
-        files: [
-          'test/filesToLoad/loadFiles/**/*.js',
-          {
-            pattern: 'not-cached.js',
-            nocache: true
-          },
-          {
-            pattern: 'not-watched.js',
-            watched: false
-          },
-          'test/filesToLoad/servedFiles/fileC.js',
-        ],
-        packages: 'custom_packages/'
+        loadFiles: ['test/filesToLoad/loadFiles/**/*.js', {
+          pattern: 'not-cached.js',
+          nocache: true
+        }, {pattern: 'not-watched.js', watched: false}],
+        packages: 'custom_packages/',
+        serveFiles: ['test/filesToLoad/servedFiles/fileC.js']
       };
       client = {};
       emitter = {
@@ -67,7 +60,7 @@
       expect(client.jspm.specFilesLoadedBySystemJS).toEqual(['test/filesToLoad/loadFiles/fileA.spec.js', 'test/filesToLoad/loadFiles/fileB.spec.js']);
     });
 
-    it('should add files from jspm.files to the files array as served files', function() {
+    it('should add files from jspm.serveFiles to the files array as served files', function() {
       expect(normalPath(files[files.length - 2].pattern)).toEqual(normalPath(cwd + '/test/filesToLoad/servedFiles/fileC.js'));
       expect(files[files.length - 2].included).toEqual(false);
       expect(files[files.length - 2].served).toEqual(true);
@@ -107,19 +100,12 @@
       jspm = {
         browserConfig: 'custom_browser.js',
         jspmConfig: 'custom_config.js',
-        files: [
-          'test/filesToLoad/loadFiles/**/*.js',
-          'test/filesToLoad/servedFiles/fileC.js',
-          {
-            pattern: 'not-cached.js',
-            nocache: true
-          },
-          {
-            pattern: 'not-watched.js',
-            watched: false
-          }
-        ],
-        packages: 'custom_packages/'
+        loadFiles: ['test/filesToLoad/loadFiles/**/*.js', {
+          pattern: 'not-cached.js',
+          nocache: true
+        }, {pattern: 'not-watched.js', watched: false}],
+        packages: 'custom_packages/',
+        serveFiles: ['test/filesToLoad/servedFiles/fileC.js']
       };
       client = {};
       emitter = {
@@ -151,19 +137,12 @@
       jspm = {
         browserConfig: 'custom_browser.js',
         jspmConfig: 'custom_config.js',
-        files: [
-          'src/**/*.js',
-          'testfile.js',
-          {
-            pattern: 'not-cached.js',
-            nocache: true
-          },
-          {
-            pattern: 'not-watched.js',
-            watched: false
-          }
-        ],
+        loadFiles: ['src/**/*.js', {
+          pattern: 'not-cached.js',
+          nocache: true
+        }, {pattern: 'not-watched.js', watched: false}],
         packages: 'custom_packages/',
+        serveFiles: ['testfile.js'],
         adapter: 'custom_adapter.js'
       };
       client = {};
@@ -194,6 +173,7 @@
     beforeEach(function() {
 
 
+
       pathToTestPackageJson = function(pkgJson) {
         return 'test/packageJson/' + pkgJson;
       }
@@ -202,18 +182,12 @@
       jspm = {
         browserConfig: 'custom_browser.js',
         jspmConfig: 'custom_config.js',
-        files: [
-          'src/**/*.js',
-          'testfile.js',
-          {
-            pattern: 'not-cached.js',
-            nocache: true
-          }, {
-            pattern: 'not-watched.js',
-            watched: false
-          }
-        ],
+        loadFiles: ['src/**/*.js', {
+          pattern: 'not-cached.js',
+          nocache: true
+        }, {pattern: 'not-watched.js', watched: false}],
         packages: 'custom_packages/',
+        serveFiles: ['testfile.js'],
         adapter: 'custom_adapter.js'
       };
       client = {};
@@ -269,17 +243,12 @@
       jspm = {
         jspmConfig: 'custom.jspm.config.js',
         browserConfig: 'custom_browser.js',
-        files: [
-          'test/filesToLoad/loadFiles/**/*.js',
-          'test/filesToLoad/servedFiles/fileC.js',
-          {
-            pattern: 'not-cached.js',
-            nocache: true
-          }, {
-            pattern: 'not-watched.js',
-            watched: false
-          }],
-        packages: 'custom_packages/'
+        loadFiles: ['test/filesToLoad/loadFiles/**/*.js', {
+          pattern: 'not-cached.js',
+          nocache: true
+        }, {pattern: 'not-watched.js', watched: false}],
+        packages: 'custom_packages/',
+        serveFiles: ['test/filesToLoad/servedFiles/fileC.js']
       };
       client = {};
       emitter = {

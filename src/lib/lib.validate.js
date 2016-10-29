@@ -1,7 +1,9 @@
 module.exports = {
   hasValue: hasValue,
   isJSExt: isJSExt,
-  isTSExt: isTSExt
+  isTSExt: isTSExt,
+  isSpecRegex: isSpecRegex,
+  isTestRegex: isTestRegex
 };
 
 function hasValue(value) {
@@ -19,4 +21,12 @@ function isJSExt(path) {
 
 function isTSExt(path) {
   return regexExt(path) && regexExt(path)[0] === '.ts';
+}
+
+function isSpecRegex(path) {
+  return /.*?(\.[sS][pP][eE][cC]).[jJtT][sS]/.test(path);
+}
+
+function isTestRegex(path) {
+  return /.*?(\.[tT][eE][sS][tT]).[jJtT][sS]/.test(path);
 }

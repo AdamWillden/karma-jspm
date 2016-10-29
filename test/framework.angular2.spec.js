@@ -17,12 +17,19 @@
       jspm = {
         browserConfig: 'custom_browser.js',
         jspmConfig: 'custom_config.js',
-        loadFiles: ['src/**/*.js', {
-          pattern: 'not-cached.js',
-          nocache: true
-        }, {pattern: 'not-watched.js', watched: false}],
+        files: [
+          'src/**/*.js',
+          {
+            pattern: 'not-cached.js',
+            nocache: true
+          },
+          {
+            pattern: 'not-watched.js',
+            watched: false
+          },
+          'testfile.js'
+        ],
         packages: 'custom_packages/',
-        serveFiles: ['testfile.js'],
         adapter: 'angular2'
       };
       client = {};

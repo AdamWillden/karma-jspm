@@ -62,13 +62,13 @@
         .map(extractModuleName);
     }
 
-    var allSpecFiles = karma.config.jspm.expandedFiles
+    var allSpecFiles = karma.config.jspm.specFilesLoadedBySystemJS
       .filter(isSpecFile)
       .map(extractModuleName);
 
-    var allAppFiles = karma.config.jspm.expandedFiles
-      .filter(notSpecFile)
-      .map(extractModuleName);
+    // var allAppFiles = karma.config.jspm.expandedFiles
+    //   .filter(notSpecFile)
+    //   .map(extractModuleName);
 
     // Angular 2.x testing.TestBed.initTestEnvironment
     var testingBrowser;
@@ -96,9 +96,9 @@
         return Promise.resolve();
 
       })
-      .then(function() {
-        return createPromiseChain(allAppFiles, 'app');
-      })
+      // .then(function() {
+      //   return createPromiseChain(allAppFiles, 'app');
+      // })
       .then(function() {
         return createPromiseChain(allSpecFiles, 'spec');
       })
@@ -131,9 +131,9 @@
       return isSpecRegex(path) || isTestRegex(path);
     }
 
-    function notSpecFile(path) {
-      return !isSpecRegex(path) && !isTestRegex(path);
-    }
+    // function notSpecFile(path) {
+    //   return !isSpecRegex(path) && !isTestRegex(path);
+    // }
 
     function SystemImportPreload(moduleName) {
       return System['import'](moduleName).then(function(module) {
@@ -159,9 +159,9 @@
       });
     }
 
-    function SystemImportApp(moduleName) {
-      return System['import'](moduleName);
-    }
+    // function SystemImportApp(moduleName) {
+    //   return System['import'](moduleName);
+    // }
 
     function SystemImportSpecs(moduleName) {
       return System['import'](moduleName).then(function(module) {
@@ -208,9 +208,9 @@
               return SystemImportPreload(moduleName);
             }
 
-            if (importType == 'app') {
-              return SystemImportApp(moduleName);
-            }
+            // if (importType == 'app') {
+            //   return SystemImportApp(moduleName);
+            // }
 
             if (importType == 'spec') {
               return SystemImportSpecs(moduleName);
