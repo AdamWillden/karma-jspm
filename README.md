@@ -69,48 +69,61 @@ config.set({
 }
 ```
 
-####loadFiles
+####loadFiles *DEPRECATED*  
+Use [files](#files) below.
+LoadFiles and serverFiles properties were used to distinguish with patterns
+karma should use to load files into the browser. SystemJS loads all app and 
+test files in the browser, so there is only one karma pattern that works.
+
+This pattern is configured by default with the ```files``` property.
+
+In case you are wondering, this is the pattern:
+
+```js
+
+    {
+        pattern: 'relative/path/file.ts',
+    
+        // Not using <script> tags to load files, systemjs is loading them.
+        included: false,
+    
+        // Karma is serving the file
+        served: true,
+    
+        // Not serving from the file system, serving from karma server
+        nocache: false,
+    
+        // Re-test if file changes
+        watched: true
+      }
+```
+
+####serveFiles *DEPRECATED*  
+Use [files](#files) below.
+
+See [loadFiles](#loadFiles) above for deprecation explanation.
+
+####files 
 Required  
 **Default**: *undefined*
 
-The `loadFiles` configuration tells karma-jspm which files should 
-be dynamically loaded via systemjs *before* the tests run. Globs 
-or regular file paths are acceptable.
+The ```jspm.files``` configuration tells karma-jspm which files should 
+be dynamically loaded via systemjs.
 
+[glob 7.x](https://www.npmjs.com/package/glob) is supported.
 
 **You should not include these in the regular karma files array.** 
-karma-jspm takes care of this for you.
+karma-jspm takes care of this for you by adding them with the correct
+karma object configuration. 
 
 ```js
 config.set({
     
-    basePath: './',
+    basePath: './src/browser',
     
     jspm: {
-        // Edit this to your needs
-        loadFiles: ['src/**/*.js', 'test/**/*.js']
-    }
-}
-```
-
-####serveFiles
-Optional  
-**Default**: *undefined*
-
-You may want to make additional files/a file pattern available for 
-jspm to load, but not load it right away. Simply add that to `serveFiles`.
-One use case for this is to only put test specs in `loadFiles`, and jspm 
-will only load the src files when and if the test files require them. 
-Such a config would look like this:
-
-```js
-config.set({
-
-    basePath: './src/client',
-    jspm: {
-        // relative to basePath in karma config
-        loadFiles: ['test/**/*.js'],
-        serveFiles: ['src/**/*.js']
+        // glob 7.x patterns supported 
+        files: ['app/**/!(*.e2e-spec).ts']
     }
 }
 ```

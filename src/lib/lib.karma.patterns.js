@@ -46,7 +46,7 @@ var createSystemJSPattern = function(path) {
     // Not serving from the file system, serving from karma server
     nocache: false,
 
-    // Re-test is file changes
+    // Re-test if file changes
     watched: true
   };
 };
